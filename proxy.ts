@@ -4,20 +4,33 @@ import { routing } from './i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);
 
-export default function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+// NextAuth v5 default cookie names. We check existence only — full session
+// validation happens server-side in the admin layout. This is the recommended
+// "optimistic check" pattern for Next.js Proxy (do not run slow auth in proxy).
+const SESSION_COOKIE_NAMES = [
+  'authjs.session-token',
+  '__Secure-authjs.session-token',
+];
 
-  // Protect all /admin routes (except /admin/login)
-  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
-    const adminSession = request.cookies.get('next-auth.session-token') ||
-      request.cookies.get('__Secure-next-auth.session-token');
-    if (!adminSession) {
+export function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const isAdminPath = pathname.startsWith('/admin');
+  const isLoginPath = pathname.startsWith('/admin/login');
+  const isApiPath = pathname.startsWith('/api');
+
+  if (isAdminPath) {
+    const hasSession = SESSION_COOKIE_NAMES.some((name) => request.cookies.get(name));
+
+    if (!isLoginPath && !hasSession) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
+    if (isLoginPath && hasSession) {
+      return NextResponse.redirect(new URL('/admin', request.url));
+    }
+    return NextResponse.next();
   }
 
-  // Skip intl middleware for admin routes and API routes
-  if (pathname.startsWith('/admin') || pathname.startsWith('/api')) {
+  if (isApiPath) {
     return NextResponse.next();
   }
 
@@ -25,7 +38,5 @@ export default function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next|_vercel|.*\\..*).*)',
-  ],
+  matcher: ['/((?!_next|_vercel|.*\\..*).*)'],
 };

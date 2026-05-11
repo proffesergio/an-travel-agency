@@ -1,0 +1,14 @@
+---
+# Optional: cPanel Git Version Control deployment hook.
+# Triggered when you push to the repository configured under "cPanel > Git Version Control".
+# Adjust the paths below to match your hosting layout (DEPLOYPATH is supplied by cPanel).
+
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/USERNAME/atharnurtravels.com
+    - /bin/cp -R ./* $DEPLOYPATH
+    - /bin/cp -R ./.htaccess $DEPLOYPATH/.htaccess
+    - cd $DEPLOYPATH && npm ci --omit=dev
+    - cd $DEPLOYPATH && npm run build:cpanel
+    # Touch the restart flag so Passenger picks up the new build
+    - mkdir -p $DEPLOYPATH/tmp && touch $DEPLOYPATH/tmp/restart.txt
