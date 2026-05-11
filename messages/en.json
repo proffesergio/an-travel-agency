@@ -1,0 +1,109 @@
+{
+  "nav": {
+    "hajj": "Hajj Packages",
+    "umrah": "Umrah Packages",
+    "tours": "International Tours",
+    "airTicketing": "Air Ticketing",
+    "about": "About Us",
+    "contact": "Contact"
+  },
+  "hero": {
+    "badge": "Bangladesh's Trusted Hajj & Travel Agency",
+    "headline": "Your Journey to the Holy Land Begins Here",
+    "subheadline": "We provide complete Hajj & Umrah packages, international tours, and air ticketing services with 24/7 support.",
+    "ctaPackages": "View Hajj Packages",
+    "ctaContact": "Contact Us"
+  },
+  "services": {
+    "title": "Our Services",
+    "subtitle": "Everything you need for a blessed and comfortable journey",
+    "hajj": {
+      "title": "Hajj Packages",
+      "desc": "Complete Hajj packages with flights, hotel, visa, and guided support."
+    },
+    "umrah": {
+      "title": "Umrah Packages",
+      "desc": "Year-round Umrah packages for individuals and groups."
+    },
+    "tours": {
+      "title": "International Tours",
+      "desc": "Curated tours to Dubai, Malaysia, Thailand, and beyond."
+    },
+    "airTicketing": {
+      "title": "Air Ticketing",
+      "desc": "Best fares on domestic and international flights."
+    }
+  },
+  "featured": {
+    "title": "Featured Packages",
+    "subtitle": "Handpicked packages for your next journey",
+    "viewAll": "View All Packages",
+    "bookNow": "Book Now",
+    "learnMore": "Learn More",
+    "duration": "Duration",
+    "price": "Starting from"
+  },
+  "whyUs": {
+    "title": "Why Choose Athar Nur Travels?",
+    "subtitle": "Trusted by thousands of pilgrims and travelers across Bangladesh",
+    "licensed": {
+      "title": "Government Licensed",
+      "desc": "ATAB registered and government approved travel agency."
+    },
+    "support": {
+      "title": "24/7 Support",
+      "desc": "Round-the-clock assistance throughout your journey."
+    },
+    "affordable": {
+      "title": "Affordable Pricing",
+      "desc": "Best value packages without compromising on quality."
+    },
+    "experienced": {
+      "title": "15+ Years Experience",
+      "desc": "Decades of expertise in Hajj and international travel."
+    }
+  },
+  "stats": {
+    "pilgrims": "Happy Pilgrims",
+    "years": "Years of Experience",
+    "destinations": "Destinations",
+    "support": "Support Available"
+  },
+  "cta": {
+    "title": "Ready to Plan Your Journey?",
+    "subtitle": "Speak to our travel experts today and get a personalised quote.",
+    "whatsapp": "WhatsApp Us",
+    "enquire": "Send Enquiry"
+  },
+  "footer": {
+    "tagline": "Your trusted partner for Hajj, Umrah, and international travel.",
+    "address": "Azad Centre, 55 Purana Paltan (14th Floor), Dhaka-1000",
+    "quickLinks": "Quick Links",
+    "contact": "Contact Us",
+    "rights": "All rights reserved."
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "We're here to help. Reach out to us through any of the channels below.",
+    "name": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "message": "Your Message",
+    "send": "Send Message",
+    "sending": "Sending...",
+    "success": "Message sent! We'll get back to you soon.",
+    "error": "Something went wrong. Please try again."
+  },
+  "booking": {
+    "title": "Book This Package",
+    "name": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "passengers": "Number of Passengers",
+    "message": "Special Requirements",
+    "submit": "Send Enquiry",
+    "submitting": "Submitting...",
+    "success": "Enquiry submitted! Our team will contact you shortly.",
+    "error": "Something went wrong. Please try again."
+  }
+}
