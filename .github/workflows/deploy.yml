@@ -32,16 +32,18 @@ jobs:
             ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
 
       # Step 4: Build the Next.js application
-      # This creates the .next/standalone folder
+      # Next 16 with Turbopack outputs to ./build (not ./.next).
+      # output: 'standalone' in next.config.ts produces build/standalone/.
       - name: Build Next.js app
         run: npm run build
 
-      # Step 5: Copy static assets (optional but recommended)
-      # Your standalone server.js needs these to serve static files
+      # Step 5: Copy static assets into the standalone bundle.
+      # The standalone server expects: public/ next to its server.js, and
+      # static/ inside <distDir>/ — here that is build/standalone/build/static.
       - name: Copy static assets to standalone directory
         run: |
-          cp -r public .next/standalone/public
-          cp -r .next/static .next/standalone/.next/static
+          cp -r public build/standalone/public
+          cp -r build/static build/standalone/build/static
 
       # Step 6: Deploy to your cPanel server via FTP
       # Only the minimal 'standalone' folder is uploaded for a faster deploy
@@ -51,5 +53,5 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: .next/standalone/
+          local-dir: ./build/standalone/
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
