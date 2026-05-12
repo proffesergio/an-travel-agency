@@ -63,3 +63,6 @@ jobs:
             **/.git*
             **/.git*/**
             **/.DS_Store
+          # TEMPORARY: wipes the remote dir before upload. Set to false after
+          # the first successful deploy so day-to-day pushes stay incremental.
+          dangerous-clean-slate: true
