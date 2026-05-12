@@ -8,11 +8,28 @@ import {
 } from '@/lib/services/enquiries';
 import { enquiryStatusSchema } from '@/lib/validation/enquiry';
 
+// Prevent static generation of this route – forces runtime execution
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 interface RouteContext {
   params: Promise<{ id: string }>;
 }
 
+/**
+ * Validates that required admin credentials exist in the environment.
+ * Called inside each handler to avoid build-time crashes.
+ */
+function validateAdminEnvironment() {
+  if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
+    throw new Error('Missing admin credentials. Set ADMIN_EMAIL and ADMIN_PASSWORD in cPanel Node.js App env vars.');
+  }
+}
+
 export async function GET(_request: NextRequest, { params }: RouteContext) {
+  // ✅ Credentials check moved here – runs at request time only
+  validateAdminEnvironment();
+
   const session = await auth();
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -32,6 +49,9 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
 }
 
 export async function PATCH(request: NextRequest, { params }: RouteContext) {
+  // ✅ Credentials check moved here
+  validateAdminEnvironment();
+
   const session = await auth();
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -64,6 +84,9 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
 }
 
 export async function DELETE(_request: NextRequest, { params }: RouteContext) {
+  // ✅ Credentials check moved here
+  validateAdminEnvironment();
+
   const session = await auth();
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
