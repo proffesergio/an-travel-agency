@@ -31,6 +31,12 @@ export default function Navbar() {
     { href: '/contact', label: t('contact') },
   ];
 
+  const featuredLink = {
+    href: '/hajj-2027-pre-registration',
+    label: 'হজ্ব ২০২৭',
+    badge: 'NEW',
+  };
+
   const switchLocale = (locale: string) => {
     // Replace locale prefix in path
     const segments = pathname.split('/');
@@ -88,6 +94,15 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
+              <Link
+                href={getLocalizedHref(featuredLink.href)}
+                className="relative ml-2 px-3 py-2 rounded-md text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors"
+              >
+                {featuredLink.label}
+                <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded-full bg-amber-500 text-white text-[9px] font-bold tracking-wider">
+                  {featuredLink.badge}
+                </span>
+              </Link>
             </div>
 
             {/* Right side: language switcher + mobile menu */}
@@ -158,6 +173,16 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
+              <Link
+                href={getLocalizedHref(featuredLink.href)}
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center justify-between px-3 py-2 rounded-md text-sm font-semibold text-amber-700 bg-amber-50"
+              >
+                {featuredLink.label}
+                <span className="px-1.5 py-0.5 rounded-full bg-amber-500 text-white text-[9px] font-bold tracking-wider">
+                  {featuredLink.badge}
+                </span>
+              </Link>
               {/* Mobile contact info */}
               <div className="pt-3 border-t border-gray-100 text-xs text-gray-500">
                 <p className="flex items-center gap-1">
