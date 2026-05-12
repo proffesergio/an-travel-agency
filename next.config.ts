@@ -4,6 +4,7 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 const nextConfig: NextConfig = {
+  distDir: 'build',
   output: 'standalone',
   compress: true,
   poweredByHeader: false,
@@ -31,5 +32,6 @@ const nextConfig: NextConfig = {
     ];
   },
 };
+
 
 export default withNextIntl(nextConfig);

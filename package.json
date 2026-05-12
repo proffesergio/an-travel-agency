@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "build:cpanel": "next build && cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static",
-    "start": "node server.js",
+    "start": "NODE_ENV=production node server.js",
     "start:standalone": "node .next/standalone/server.js",
     "lint": "eslint",
     "typecheck": "tsc --noEmit"
