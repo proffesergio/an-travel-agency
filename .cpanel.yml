@@ -5,7 +5,7 @@
 
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/atharnu2/public_html
+    - export DEPLOYPATH=/home/atharnu2/atharnurtravels.com
     - /bin/cp -R ./* $DEPLOYPATH
     - /bin/cp -R ./.htaccess $DEPLOYPATH/.htaccess
     - cd $DEPLOYPATH && npm ci --omit=dev
