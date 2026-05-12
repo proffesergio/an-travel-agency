@@ -1,25 +1,9 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
-
-if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
-  throw new Error(
-    'Missing admin credentials. Set ADMIN_EMAIL and ADMIN_PASSWORD in your environment (.env.local in development, cPanel Node.js App env vars in production).'
-  );
-}
-
-if (!NEXTAUTH_SECRET || NEXTAUTH_SECRET.length < 32) {
-  throw new Error(
-    'NEXTAUTH_SECRET must be set to a random string of at least 32 characters. Generate one with: openssl rand -base64 32'
-  );
-}
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
-  secret: NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     Credentials({
       name: 'credentials',
@@ -28,13 +12,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
+        const adminEmail = process.env.ADMIN_EMAIL;
+        const adminPassword = process.env.ADMIN_PASSWORD;
+        const nextAuthSecret = process.env.NEXTAUTH_SECRET;
+
+        if (!adminEmail || !adminPassword) {
+          console.error(
+            '[auth] Missing admin credentials. Set ADMIN_EMAIL and ADMIN_PASSWORD in your environment (.env.local in development, cPanel Node.js App env vars in production).'
+          );
+          return null;
+        }
+
+        if (!nextAuthSecret || nextAuthSecret.length < 32) {
+          console.error(
+            '[auth] NEXTAUTH_SECRET must be set to a random string of at least 32 characters. Generate one with: openssl rand -base64 32'
+          );
+          return null;
+        }
+
         const email = typeof credentials?.email === 'string' ? credentials.email.trim() : '';
         const password = typeof credentials?.password === 'string' ? credentials.password : '';
 
         if (!email || !password) return null;
-        if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) return null;
+        if (email !== adminEmail || password !== adminPassword) return null;
 
-        return { id: 'admin', name: 'Admin', email: ADMIN_EMAIL };
+        return { id: 'admin', name: 'Admin', email: adminEmail };
       },
     }),
   ],
