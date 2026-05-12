@@ -46,7 +46,11 @@ jobs:
           cp -r build/static build/standalone/build/static
 
       # Step 6: Deploy to your cPanel server via FTP
-      # Only the minimal 'standalone' folder is uploaded for a faster deploy
+      # Only the minimal 'standalone' folder is uploaded for a faster deploy.
+      # IMPORTANT: the action's default exclude list drops `node_modules/**`,
+      # which is correct for a normal Next app but wrong for a standalone
+      # bundle — Next.js trace-collects the runtime deps into
+      # build/standalone/node_modules/. We override `exclude` to keep them.
       - name: Deploy to cPanel via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -55,3 +59,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./build/standalone/
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.DS_Store
