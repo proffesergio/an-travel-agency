@@ -1,60 +1,120 @@
-import NextAuth from 'next-auth';
+import NextAuth, { type NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import Google from 'next-auth/providers/google';
+import { connectDB } from '@/lib/mongodb';
+import User from '@/models/User';
+import { verifyPassword } from '@/lib/password';
+import { normalizePhone } from '@/lib/validation/auth';
+
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+const isGoogleEnabled = !!googleClientId && !!googleClientSecret;
+
+const providers: NextAuthConfig['providers'] = [
+  Credentials({
+    id: 'credentials',
+    name: 'Email or phone',
+    credentials: {
+      identifier: { label: 'Email or phone', type: 'text' },
+      password: { label: 'Password', type: 'password' },
+    },
+    async authorize(credentials) {
+      const identifier =
+        typeof credentials?.identifier === 'string' ? credentials.identifier.trim() : '';
+      const password =
+        typeof credentials?.password === 'string' ? credentials.password : '';
+      if (!identifier || !password) return null;
+
+      // Admin fallback (legacy env-based admin)
+      const adminEmail = process.env.ADMIN_EMAIL;
+      const adminPassword = process.env.ADMIN_PASSWORD;
+      if (adminEmail && adminPassword && identifier === adminEmail && password === adminPassword) {
+        return { id: 'admin', name: 'Admin', email: adminEmail, role: 'admin' };
+      }
+
+      try {
+        await connectDB();
+        const isEmail = identifier.includes('@');
+        const query = isEmail
+          ? { email: identifier.toLowerCase() }
+          : { phone: normalizePhone(identifier) };
+        const user = await User.findOne(query);
+        if (!user || !user.passwordHash) return null;
+        const ok = await verifyPassword(password, user.passwordHash);
+        if (!ok) return null;
+        return {
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        };
+      } catch (err) {
+        console.error('[auth] credentials authorize failed', err);
+        return null;
+      }
+    },
+  }),
+];
+
+if (isGoogleEnabled) {
+  providers.push(
+    Google({
+      clientId: googleClientId,
+      clientSecret: googleClientSecret,
+    })
+  );
+}
+
+export const isGoogleAuthEnabled = isGoogleEnabled;
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
   secret: process.env.NEXTAUTH_SECRET,
-  providers: [
-    Credentials({
-      name: 'credentials',
-      credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
-      },
-      async authorize(credentials) {
-        const adminEmail = process.env.ADMIN_EMAIL;
-        const adminPassword = process.env.ADMIN_PASSWORD;
-        const nextAuthSecret = process.env.NEXTAUTH_SECRET;
-
-        if (!adminEmail || !adminPassword) {
-          console.error(
-            '[auth] Missing admin credentials. Set ADMIN_EMAIL and ADMIN_PASSWORD in your environment (.env.local in development, cPanel Node.js App env vars in production).'
-          );
-          return null;
-        }
-
-        if (!nextAuthSecret || nextAuthSecret.length < 32) {
-          console.error(
-            '[auth] NEXTAUTH_SECRET must be set to a random string of at least 32 characters. Generate one with: openssl rand -base64 32'
-          );
-          return null;
-        }
-
-        const email = typeof credentials?.email === 'string' ? credentials.email.trim() : '';
-        const password = typeof credentials?.password === 'string' ? credentials.password : '';
-
-        if (!email || !password) return null;
-        if (email !== adminEmail || password !== adminPassword) return null;
-
-        return { id: 'admin', name: 'Admin', email: adminEmail };
-      },
-    }),
-  ],
+  providers,
   pages: {
     signIn: '/admin/login',
     error: '/admin/login',
   },
   session: {
     strategy: 'jwt',
-    maxAge: 24 * 60 * 60,
+    maxAge: 30 * 24 * 60 * 60,
   },
   callbacks: {
+    async signIn({ user, account, profile }) {
+      // Auto-provision user records on Google sign-in
+      if (account?.provider === 'google' && profile?.email) {
+        try {
+          await connectDB();
+          const existing = await User.findOne({ email: profile.email.toLowerCase() });
+          if (!existing) {
+            await User.create({
+              name: profile.name ?? user.name ?? profile.email.split('@')[0],
+              email: profile.email.toLowerCase(),
+              phone: '',
+              passwordHash: '',
+              role: 'user',
+              provider: 'google',
+              emailVerified: new Date(),
+            });
+          }
+        } catch (err) {
+          console.error('[auth] google signIn provisioning failed', err);
+        }
+      }
+      return true;
+    },
     async jwt({ token, user }) {
-      if (user) token.id = user.id;
+      if (user) {
+        token.id = user.id;
+        token.role = (user as { role?: string }).role ?? 'user';
+      }
       return token;
     },
     async session({ session, token }) {
-      if (session.user) (session.user as { id?: string }).id = token.id as string;
+      if (session.user) {
+        (session.user as { id?: string }).id = token.id as string;
+        (session.user as { role?: string }).role = (token.role as string) ?? 'user';
+      }
       return session;
     },
   },
@@ -66,10 +126,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           action: 'login',
           entityType: 'user',
           actor: user.email ?? 'unknown',
-          details: 'Admin signed in',
+          details: `Signed in (${(user as { role?: string }).role ?? 'user'})`,
         });
       } catch {
-        // Activity logging is best-effort; never block auth on it.
+        // best-effort
       }
     },
     async signOut(message) {
@@ -83,7 +143,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           action: 'logout',
           entityType: 'user',
           actor: email,
-          details: 'Admin signed out',
+          details: 'Signed out',
         });
       } catch {
         // best-effort

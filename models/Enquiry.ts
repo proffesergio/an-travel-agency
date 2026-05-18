@@ -11,6 +11,9 @@ export interface IEnquiry extends Document {
   message: string;
   status: 'new' | 'contacted' | 'closed';
   paymentStatus?: 'pending' | 'paid' | 'failed';
+  paymentMethod?: 'bkash' | 'nagad' | 'rocket' | 'bank' | 'card' | 'cash';
+  paymentAmount?: number;
+  paymentReference?: string;
   transactionId?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -32,6 +35,12 @@ const EnquirySchema = new Schema<IEnquiry>(
     message: { type: String, default: '' },
     status: { type: String, enum: ['new', 'contacted', 'closed'], default: 'new' },
     paymentStatus: { type: String, enum: ['pending', 'paid', 'failed'] },
+    paymentMethod: {
+      type: String,
+      enum: ['bkash', 'nagad', 'rocket', 'bank', 'card', 'cash'],
+    },
+    paymentAmount: { type: Number },
+    paymentReference: { type: String },
     transactionId: { type: String },
   },
   { timestamps: true }

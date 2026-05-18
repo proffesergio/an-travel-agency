@@ -84,7 +84,7 @@ export const ALL_PACKAGES = [
     duration: '14 Days',
     durationBn: '১৪ দিন',
     featured: true,
-    imageUrl: '/images/umrah-placeholder.jpg',
+    imageUrl: '/images/hajj-hero.jpg',
     description:
       'A spiritually enriching 14-day Umrah package covering both Makkah and Madinah with comfortable accommodation and full support.',
     descriptionBn:
@@ -117,7 +117,7 @@ export const ALL_PACKAGES = [
     duration: '21 Days',
     durationBn: '২১ দিন',
     featured: false,
-    imageUrl: '/images/umrah-placeholder.jpg',
+    imageUrl: '/images/hajj-hero.jpg',
     description:
       'An extended 21-day premium Umrah experience with 4-star hotels, private transfers, and an extended Madinah stay.',
     descriptionBn:
@@ -152,7 +152,7 @@ export const ALL_PACKAGES = [
     duration: '6 Days',
     durationBn: '৬ দিন',
     featured: true,
-    imageUrl: '/images/dubai-placeholder.jpg',
+    imageUrl: '/images/hajj-hero.jpg',
     description:
       'Explore the dazzling city of Dubai — Burj Khalifa, Dubai Mall, Desert Safari, and more — in a 6-day fully guided tour.',
     descriptionBn:
@@ -187,7 +187,7 @@ export const ALL_PACKAGES = [
     duration: '8 Days',
     durationBn: '৮ দিন',
     featured: false,
-    imageUrl: '/images/malaysia-placeholder.jpg',
+    imageUrl: '/images/hajj-hero.jpg',
     description:
       'Experience the best of Malaysia — Kuala Lumpur\'s iconic skyline, Genting Highlands, Langkawi beaches, and Batu Caves.',
     descriptionBn:
@@ -223,7 +223,7 @@ export const ALL_PACKAGES = [
     duration: '7 Days',
     durationBn: '৭ দিন',
     featured: false,
-    imageUrl: '/images/thailand-placeholder.jpg',
+    imageUrl: '/images/hajj-hero.jpg',
     description:
       'Bangkok temples, Pattaya beaches, Coral Island, and the vibrant Thai night markets — all in one unforgettable week.',
     descriptionBn:

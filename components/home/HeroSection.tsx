@@ -3,19 +3,23 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { ArrowRight } from 'lucide-react';
+import GravityField from './GravityField';
 
 export default function HeroSection({ locale }: { locale: string }) {
   const t = useTranslations('hero');
 
   return (
-    <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+    <section className="relative min-h-[92vh] flex items-center overflow-hidden bg-[#0f2d23]">
       {/* Background image with overlay */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: "url('/images/hajj-hero.jpg')" }}
       />
       {/* Dark green gradient overlay — matches brand */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#1b4332]/90 via-[#2d6a4f]/75 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#1b4332]/95 via-[#2d6a4f]/80 to-[#1b4332]/30" />
+
+      {/* Gravitational background animation */}
+      <GravityField intensity="normal" />
 
       {/* Decorative bottom curve */}
       <div className="absolute bottom-0 left-0 right-0">

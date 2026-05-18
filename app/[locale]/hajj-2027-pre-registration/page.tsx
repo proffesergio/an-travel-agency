@@ -3,6 +3,7 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import Hajj2027RegistrationForm from '@/components/home/Hajj2027RegistrationForm';
 import {
   ArrowRight,
   Building2,
@@ -222,6 +223,24 @@ export default async function Hajj2027Page({
         </section>
 
         {/* ============================================================ */}
+        {/* INLINE REGISTRATION FORM                                      */}
+        {/* ============================================================ */}
+        <section id="register" className="py-16 sm:py-20 bg-gradient-to-b from-stone-50 to-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-10">
+              <p className="text-sm font-semibold text-[#2d6a4f] tracking-widest uppercase">Step 2</p>
+              <h2 className="mt-2 text-3xl sm:text-4xl font-bold text-gray-900">
+                সরাসরি প্রাক নিবন্ধন করুন
+              </h2>
+              <p className="mt-3 text-gray-600">
+                নিচের ফর্মটি পূরণ করে এক ক্লিকেই আপনার হজ্বের প্রাক নিবন্ধন সম্পন্ন করুন। পাসপোর্ট, NID ও পাসপোর্ট সাইজ ছবি আপলোড করতে পারবেন।
+              </p>
+            </div>
+            <Hajj2027RegistrationForm />
+          </div>
+        </section>
+
+        {/* ============================================================ */}
         {/* SERVICES                                                      */}
         {/* ============================================================ */}
         <section className="py-16 sm:py-20 bg-white">
@@ -348,6 +367,13 @@ export default async function Hajj2027Page({
                 ১০০% নিরাপদ ও বিশ্বস্ত হজ্ব ব্যবস্থাপনা।
               </p>
               <div className="mt-8 flex flex-wrap gap-4 justify-center">
+                <a
+                  href="#register"
+                  className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-white text-[#1b4332] font-semibold shadow-lg transition-transform hover:scale-105"
+                >
+                  <ArrowRight className="w-5 h-5" />
+                  ফর্ম পূরণ করুন
+                </a>
                 <a
                   href={whatsappLink}
                   target="_blank"

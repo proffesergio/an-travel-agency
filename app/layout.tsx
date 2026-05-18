@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist } from 'next/font/google';
+import SessionProviderClient from '@/components/auth/SessionProviderClient';
 import WhatsAppButton from '@/components/layout/WhatsAppButton';
 import './globals.css';
 
@@ -14,8 +15,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={geist.variable} suppressHydrationWarning>
       <body className="min-h-screen flex flex-col bg-white text-gray-900 antialiased">
-        {children}
-        <WhatsAppButton />
+        <SessionProviderClient>
+          {children}
+          <WhatsAppButton />
+        </SessionProviderClient>
       </body>
     </html>
   );

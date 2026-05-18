@@ -65,7 +65,7 @@ jobs:
             **/.DS_Store
           # TEMPORARY: wipes the remote dir before upload. Re-comment after a
           # successful deploy so day-to-day pushes stay incremental.
-          dangerous-clean-slate: true
+        #   dangerous-clean-slate: true
           # Bumped from the 30s default — the standalone bundle has ~1500
           # files and the cPanel FTP control socket goes idle long enough
           # between commands that the default times out.

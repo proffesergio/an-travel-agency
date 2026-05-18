@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Clock, Tag, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Clock, Tag, CheckCircle2 } from 'lucide-react';
 
 interface PackageCardProps {
   slug: string;
@@ -25,6 +25,12 @@ const CATEGORY_BADGE: Record<string, string> = {
   tour: 'bg-blue-100 text-blue-700',
 };
 
+const FALLBACK_IMAGE: Record<string, string> = {
+  hajj: '/images/hajj-hero.jpg',
+  umrah: '/images/hajj-hero.jpg',
+  tour: '/images/hajj-hero.jpg',
+};
+
 export default function PackageCard({
   slug,
   category,
@@ -36,27 +42,41 @@ export default function PackageCard({
   locale,
 }: PackageCardProps) {
   const href = `/${locale}/${CATEGORY_HREF[category]}/${slug}`;
+  const src = imageUrl || FALLBACK_IMAGE[category];
 
   return (
-    <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow border border-gray-100 flex flex-col">
+    <Link
+      href={href}
+      className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-[#74c69d]/40 hover:-translate-y-1 flex flex-col h-full"
+    >
       {/* Image */}
       <div className="relative h-52 bg-gray-200 overflow-hidden">
         <Image
-          src={imageUrl}
+          src={src}
           alt={title}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover group-hover:scale-110 transition-transform duration-700"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
         <div className="absolute top-3 left-3">
-          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${CATEGORY_BADGE[category]}`}>
+          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${CATEGORY_BADGE[category]} shadow-sm`}>
             {category.toUpperCase()}
+          </span>
+        </div>
+        <div className="absolute bottom-3 right-3">
+          <span className="inline-flex items-center gap-1 text-xs font-bold text-white bg-[#2d6a4f]/90 backdrop-blur-sm px-2.5 py-1 rounded-full">
+            <Tag className="w-3 h-3" />
+            ৳{price.toLocaleString('en-IN')}
           </span>
         </div>
       </div>
 
       {/* Content */}
       <div className="p-5 flex flex-col flex-1">
-        <h3 className="font-bold text-gray-900 text-lg mb-3 leading-snug">{title}</h3>
+        <h3 className="font-bold text-gray-900 text-lg mb-3 leading-snug line-clamp-2 group-hover:text-[#2d6a4f] transition-colors">
+          {title}
+        </h3>
 
         {/* Meta */}
         <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
@@ -64,10 +84,7 @@ export default function PackageCard({
             <Clock className="w-4 h-4 text-[#2d6a4f]" />
             {duration}
           </span>
-          <span className="flex items-center gap-1 font-bold text-[#2d6a4f] text-base">
-            <Tag className="w-4 h-4" />
-            ৳{price.toLocaleString('en-IN')}
-          </span>
+          <span className="text-xs uppercase tracking-wider text-gray-400">per person</span>
         </div>
 
         {/* Top inclusions */}
@@ -75,18 +92,18 @@ export default function PackageCard({
           {inclusions.slice(0, 3).map((item) => (
             <li key={item} className="flex items-start gap-2 text-sm text-gray-600">
               <CheckCircle2 className="w-4 h-4 text-[#2d6a4f] mt-0.5 flex-shrink-0" />
-              <span>{item}</span>
+              <span className="line-clamp-1">{item}</span>
             </li>
           ))}
         </ul>
 
-        <Link
-          href={href}
-          className="block w-full text-center py-2.5 rounded-full bg-[#2d6a4f] text-white text-sm font-semibold hover:bg-[#1b4332] transition-colors"
-        >
-          View Details & Book
-        </Link>
+        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+          <span className="text-sm font-semibold text-[#2d6a4f]">View Details & Book</span>
+          <span className="w-9 h-9 rounded-full bg-[#2d6a4f] text-white flex items-center justify-center group-hover:bg-[#1b4332] group-hover:translate-x-1 transition-all">
+            <ArrowRight className="w-4 h-4" />
+          </span>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }

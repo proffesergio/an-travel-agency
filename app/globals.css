@@ -191,12 +191,113 @@
     linear-gradient(135deg, #1b4332 0%, #2d6a4f 50%, #1b4332 100%);
   background-size: 24px 24px, 100% 100%;
 }
+/* ----- Gravitational background animation ----- */
+@keyframes gravity-orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes gravity-orbit-rev {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+@keyframes gravity-pulse {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.85; }
+  50% { transform: translateX(-50%) scale(1.6); opacity: 1; }
+}
+@keyframes gravity-drift {
+  from { background-position: 0 0; }
+  to { background-position: 420px 420px; }
+}
+
+.animate-gravity-orbit-slow { animation: gravity-orbit 60s linear infinite; }
+.animate-gravity-orbit-medium { animation: gravity-orbit 40s linear infinite; }
+.animate-gravity-orbit-medium-rev { animation: gravity-orbit-rev 48s linear infinite; }
+.animate-gravity-orbit-fast-rev { animation: gravity-orbit-rev 22s linear infinite; }
+.animate-gravity-pulse { animation: gravity-pulse 3.4s ease-in-out infinite; }
+
+/* ----- Hide native scrollbar for horizontal carousels ----- */
+.hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ----- Developer credit shimmer + blink ----- */
+@keyframes dev-shine {
+  0% { background-position: -150% 50%; }
+  100% { background-position: 250% 50%; }
+}
+@keyframes dev-blink {
+  0%, 60%, 100% { opacity: 1; transform: scale(1); }
+  30% { opacity: 0.25; transform: scale(0.85); }
+}
+@keyframes dev-heartbeat {
+  0%, 100% { transform: scale(1); }
+  20% { transform: scale(1.25); }
+  40% { transform: scale(0.95); }
+  60% { transform: scale(1.15); }
+  80% { transform: scale(1); }
+}
+
+.animate-dev-blink {
+  animation: dev-blink 1.6s ease-in-out infinite;
+}
+.animate-dev-heartbeat {
+  animation: dev-heartbeat 1.4s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.dev-credit-name {
+  display: inline-block;
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #ffffff 35%,
+    #74c69d 45%,
+    #f4a261 50%,
+    #74c69d 55%,
+    #ffffff 65%,
+    #ffffff 100%
+  );
+  background-size: 250% auto;
+  background-position: -150% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  transition: transform 0.2s ease;
+}
+.dev-credit-name::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #74c69d, #f4a261, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+}
+.dev-credit-name:hover {
+  animation: dev-shine 1.8s ease-in-out infinite;
+  transform: translateY(-1px);
+}
+.dev-credit-name:hover::after {
+  transform: scaleX(1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee,
   .animate-float-slow,
   .animate-glow-pulse,
   .shimmer-text,
-  .animate-twinkle {
+  .animate-twinkle,
+  .animate-gravity-orbit-slow,
+  .animate-gravity-orbit-medium,
+  .animate-gravity-orbit-medium-rev,
+  .animate-gravity-orbit-fast-rev,
+  .animate-gravity-pulse,
+  .animate-dev-blink,
+  .animate-dev-heartbeat,
+  .dev-credit-name:hover {
     animation: none;
   }
 }

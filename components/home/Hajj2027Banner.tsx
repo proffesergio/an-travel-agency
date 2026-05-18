@@ -6,7 +6,7 @@ export default function Hajj2027Banner({ locale }: { locale: string }) {
     <section className="relative py-10 bg-stone-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link
-          href={`/${locale}/hajj-2027-pre-registration`}
+          href={`/${locale}/hajj-2027-pre-registration#register`}
           className="group relative block overflow-hidden rounded-3xl bg-arabesque text-white p-8 sm:p-12 shadow-xl hover:shadow-2xl transition-shadow"
         >
           {/* Decorative twinkles */}
