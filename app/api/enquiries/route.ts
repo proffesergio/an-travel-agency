@@ -7,15 +7,20 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => null);
     const parsed = enquiryInputSchema.safeParse(body);
     if (!parsed.success) {
+      const flat = parsed.error.flatten();
+      const firstFieldError = Object.values(flat.fieldErrors)
+        .flat()
+        .find((m): m is string => typeof m === 'string' && m.length > 0);
       return NextResponse.json(
-        { error: 'Validation failed', issues: parsed.error.flatten() },
+        { error: firstFieldError ?? 'Validation failed', issues: flat },
         { status: 400 }
       );
     }
 
-    await createEnquiry(parsed.data);
+    const enquiry = await createEnquiry(parsed.data);
     return NextResponse.json({
       success: true,
+      enquiryId: enquiry._id.toString(),
       message: 'Enquiry submitted successfully. We will contact you shortly.',
     });
   } catch (error) {

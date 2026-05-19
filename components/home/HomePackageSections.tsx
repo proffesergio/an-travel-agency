@@ -22,7 +22,7 @@ export default function HomePackageSections({ locale }: { locale: string }) {
         viewAllLabel={isBn ? 'সকল হজ্জ প্যাকেজ' : 'View all Hajj packages'}
         packages={hajj}
         accent="green"
-        iconKey="moon"
+        iconKey="hajj"
         background="stone"
       />
 

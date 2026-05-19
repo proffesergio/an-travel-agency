@@ -9,8 +9,15 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => null);
     const parsed = registerSchema.safeParse(body);
     if (!parsed.success) {
+      const flat = parsed.error.flatten();
+      const firstFieldError = Object.values(flat.fieldErrors)
+        .flat()
+        .find((m): m is string => typeof m === 'string' && m.length > 0);
       return NextResponse.json(
-        { error: 'Validation failed', issues: parsed.error.flatten() },
+        {
+          error: firstFieldError ?? 'Please double-check your details and try again.',
+          issues: flat,
+        },
         { status: 400 }
       );
     }

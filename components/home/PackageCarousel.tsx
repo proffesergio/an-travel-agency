@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, ChevronLeft, ChevronRight, MoonStar, Plane, PlaneTakeoff, Ticket } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight, Plane, PlaneTakeoff, Ticket } from 'lucide-react';
+import PrayingHands from '@/components/icons/PrayingHands';
 import PackageCard from '@/components/packages/PackageCard';
 
 const ICONS = {
-  moon: MoonStar,
+  hajj: PrayingHands,
   plane: Plane,
   planeTakeoff: PlaneTakeoff,
   ticket: Ticket,

@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import BookingEnquiryForm from '@/components/packages/BookingEnquiryForm';
+import BookNowTrigger from '@/components/packages/BookNowTrigger';
 import { getPackageBySlug, getPackagesByCategory } from '@/lib/seed-data';
 import { CheckCircle2, Clock, Tag, Users } from 'lucide-react';
 
@@ -102,6 +103,19 @@ export default async function HajjDetailPage({
                   ৳{pkg.price.toLocaleString('en-IN')}
                 </div>
                 <div className="text-sm text-gray-500">per person</div>
+              </div>
+              <BookNowTrigger
+                packageTitle={title}
+                packageId={pkg.id}
+                category={pkg.category}
+                packagePrice={pkg.price}
+                packageDuration={duration}
+                locale={locale}
+              />
+              <div className="my-5 flex items-center gap-3 text-[11px] uppercase tracking-widest text-gray-400 font-semibold">
+                <span className="h-px flex-1 bg-gray-200" />
+                <span>or send an enquiry</span>
+                <span className="h-px flex-1 bg-gray-200" />
               </div>
               <BookingEnquiryForm
                 packageTitle={title}

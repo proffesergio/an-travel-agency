@@ -17,7 +17,7 @@ export async function loginAction(_prev: LoginState | undefined, formData: FormD
 
   try {
     await signIn('credentials', {
-      email,
+      identifier: email,
       password,
       redirectTo: '/admin',
     });

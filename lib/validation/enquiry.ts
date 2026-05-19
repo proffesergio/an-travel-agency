@@ -1,6 +1,5 @@
 import { z } from 'zod';
-
-const bdPhoneRegex = /^(\+?880|0)?1[3-9]\d{8}$/;
+import { isValidBdPhone } from './auth';
 
 export const enquiryInputSchema = z.object({
   name: z.string().trim().min(2, 'Please enter your full name').max(120),
@@ -8,7 +7,7 @@ export const enquiryInputSchema = z.object({
     .string()
     .trim()
     .min(1, 'Phone is required')
-    .refine((v) => bdPhoneRegex.test(v.replace(/[\s-]/g, '')), {
+    .refine((v) => isValidBdPhone(v), {
       message: 'Enter a valid Bangladeshi phone number',
     }),
   email: z.union([z.string().email('Enter a valid email'), z.literal('')]).optional(),

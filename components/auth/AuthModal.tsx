@@ -47,9 +47,7 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 interface FormState {
-  // sign in
   identifier: string;
-  // register
   name: string;
   email: string;
   phone: string;
@@ -64,7 +62,7 @@ const EMPTY: FormState = {
   password: '',
 };
 
-export default function AuthModal({ open, initialMode = 'signin', onClose }: AuthModalProps) {
+export default function AuthModal({ open, initialMode = 'register', onClose }: AuthModalProps) {
   const t = useTranslations('auth');
   const [mode, setMode] = useState<Mode>(initialMode);
   const [form, setForm] = useState<FormState>(EMPTY);
@@ -141,9 +139,9 @@ export default function AuthModal({ open, initialMode = 'signin', onClose }: Aut
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
+          name: form.name.trim(),
+          email: form.email.trim().toLowerCase(),
+          phone: form.phone.trim(),
           password: form.password,
         }),
       });
@@ -155,7 +153,7 @@ export default function AuthModal({ open, initialMode = 'signin', onClose }: Aut
       }
       // auto sign-in after register
       const result = await signIn('credentials', {
-        identifier: form.email,
+        identifier: form.email.trim().toLowerCase(),
         password: form.password,
         redirect: false,
       });
@@ -188,267 +186,274 @@ export default function AuthModal({ open, initialMode = 'signin', onClose }: Aut
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-8 animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] overflow-y-auto overscroll-contain"
       role="dialog"
       aria-modal="true"
       aria-labelledby="auth-modal-title"
     >
+      {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 bg-gradient-to-br from-[#0b1d18]/85 via-[#0b1d18]/75 to-[#1b4332]/70 backdrop-blur-sm animate-in fade-in duration-200"
         onClick={onClose}
         aria-hidden
       />
 
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
-        {/* Header gradient */}
-        <div className="relative bg-gradient-to-br from-[#1b4332] via-[#2d6a4f] to-[#1b4332] px-7 pt-8 pb-14 text-white overflow-hidden">
-          <div className="absolute inset-0 opacity-30 pointer-events-none">
-            <Sparkles className="absolute top-4 right-8 w-4 h-4 text-amber-200 animate-twinkle" />
-            <Sparkles
-              className="absolute bottom-4 left-12 w-3 h-3 text-amber-200 animate-twinkle"
-              style={{ animationDelay: '0.8s' }}
-            />
+      {/* Scroll container — modal lives in flow so it scrolls naturally */}
+      <div className="relative min-h-full flex items-start sm:items-center justify-center px-3 py-6 sm:py-10">
+        <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden my-auto animate-in zoom-in-95 slide-in-from-bottom-2 duration-300 ring-1 ring-black/5">
+          {/* Header gradient */}
+          <div className="relative bg-gradient-to-br from-[#1b4332] via-[#2d6a4f] to-[#1b4332] px-7 pt-7 pb-12 text-white overflow-hidden">
+            {/* Decorative gloss */}
+            <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-amber-300/15 blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-24 -left-16 w-56 h-56 rounded-full bg-emerald-300/15 blur-3xl pointer-events-none" />
+            <div className="absolute inset-0 opacity-40 pointer-events-none">
+              <Sparkles className="absolute top-5 right-9 w-4 h-4 text-amber-200 animate-twinkle" />
+              <Sparkles
+                className="absolute bottom-5 left-12 w-3 h-3 text-amber-200 animate-twinkle"
+                style={{ animationDelay: '0.8s' }}
+              />
+            </div>
+            <button
+              onClick={onClose}
+              className="absolute top-3.5 right-3.5 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-10 backdrop-blur-sm"
+              aria-label="Close"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <h2 id="auth-modal-title" className="text-2xl font-bold relative">
+              {mode === 'signin' ? t('signInTitle') : t('registerTitle')}
+            </h2>
+            <p className="text-sm text-green-100/85 mt-1 relative">
+              {mode === 'signin' ? t('signInSubtitle') : t('registerSubtitle')}
+            </p>
           </div>
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-10"
-            aria-label="Close"
-          >
-            <X className="w-4 h-4" />
-          </button>
-          <h2 id="auth-modal-title" className="text-2xl font-bold relative">
-            {mode === 'signin' ? t('signInTitle') : t('registerTitle')}
-          </h2>
-          <p className="text-sm text-green-100/80 mt-1 relative">
-            {mode === 'signin' ? t('signInSubtitle') : t('registerSubtitle')}
-          </p>
-        </div>
 
-        {/* Floating tab pill */}
-        <div className="relative -mt-6 mx-6 mb-2 bg-white rounded-full p-1 shadow-md flex border border-gray-100">
-          <button
-            onClick={() => setMode('signin')}
-            className={`flex-1 py-2 rounded-full text-sm font-semibold transition-colors ${
-              mode === 'signin'
-                ? 'bg-[#2d6a4f] text-white shadow-sm'
-                : 'text-gray-600 hover:text-[#2d6a4f]'
-            }`}
-          >
-            {t('submitSignIn')}
-          </button>
-          <button
-            onClick={() => setMode('register')}
-            className={`flex-1 py-2 rounded-full text-sm font-semibold transition-colors ${
-              mode === 'register'
-                ? 'bg-[#2d6a4f] text-white shadow-sm'
-                : 'text-gray-600 hover:text-[#2d6a4f]'
-            }`}
-          >
-            {t('submitRegister')}
-          </button>
-        </div>
+          {/* Floating tab pill */}
+          <div className="relative -mt-6 mx-6 mb-3 bg-white rounded-full p-1 shadow-md flex border border-gray-100">
+            <button
+              onClick={() => setMode('signin')}
+              className={`flex-1 py-2 rounded-full text-sm font-semibold transition-all ${
+                mode === 'signin'
+                  ? 'bg-gradient-to-r from-[#2d6a4f] to-[#1b4332] text-white shadow-sm'
+                  : 'text-gray-600 hover:text-[#2d6a4f]'
+              }`}
+            >
+              {t('submitSignIn')}
+            </button>
+            <button
+              onClick={() => setMode('register')}
+              className={`flex-1 py-2 rounded-full text-sm font-semibold transition-all ${
+                mode === 'register'
+                  ? 'bg-gradient-to-r from-[#2d6a4f] to-[#1b4332] text-white shadow-sm'
+                  : 'text-gray-600 hover:text-[#2d6a4f]'
+              }`}
+            >
+              {t('submitRegister')}
+            </button>
+          </div>
 
-        {/* Form body */}
-        <div className="px-7 pt-2 pb-7">
-          {mode === 'signin' ? (
-            <form onSubmit={handleSignIn} className="space-y-4">
-              <Field label={t('identifier')} htmlFor="identifier" Icon={Mail}>
-                <input
-                  ref={firstInputRef}
-                  id="identifier"
-                  required
-                  value={form.identifier}
-                  onChange={(e) => updateField('identifier', e.target.value)}
-                  placeholder="you@example.com or 01XXXXXXXXX"
-                  className="auth-input"
-                  autoComplete="username"
-                />
-              </Field>
-              <Field label={t('password')} htmlFor="password" Icon={Lock}>
-                <div className="relative">
+          {/* Form body */}
+          <div className="px-6 sm:px-7 pt-2 pb-6 sm:pb-7">
+            {mode === 'signin' ? (
+              <form onSubmit={handleSignIn} className="space-y-3.5">
+                <Field label={t('identifier')} htmlFor="identifier" Icon={Mail}>
                   <input
-                    id="password"
+                    ref={firstInputRef}
+                    id="identifier"
                     required
-                    type={showPassword ? 'text' : 'password'}
-                    value={form.password}
-                    onChange={(e) => updateField('password', e.target.value)}
-                    placeholder="••••••••"
-                    className="auth-input pr-10"
-                    autoComplete="current-password"
+                    value={form.identifier}
+                    onChange={(e) => updateField('identifier', e.target.value)}
+                    placeholder="you@example.com or 01XXXXXXXXX"
+                    className="auth-input"
+                    autoComplete="username"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((s) => !s)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </Field>
+                </Field>
+                <Field label={t('password')} htmlFor="password" Icon={Lock}>
+                  <div className="relative">
+                    <input
+                      id="password"
+                      required
+                      type={showPassword ? 'text' : 'password'}
+                      value={form.password}
+                      onChange={(e) => updateField('password', e.target.value)}
+                      placeholder="••••••••"
+                      className="auth-input pr-10"
+                      autoComplete="current-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((s) => !s)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </Field>
 
-              {status === 'error' && (
-                <div className="flex items-start gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl p-3">
-                  <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <span>{errorMessage}</span>
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={status === 'submitting'}
-                className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-full bg-gradient-to-r from-[#2d6a4f] to-[#1b4332] text-white font-bold text-sm shadow-md hover:shadow-lg disabled:opacity-60 transition-all"
-              >
-                {status === 'submitting' ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    {t('submitting')}
-                  </>
-                ) : (
-                  t('submitSignIn')
+                {status === 'error' && (
+                  <div className="flex items-start gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl p-3">
+                    <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                    <span>{errorMessage}</span>
+                  </div>
                 )}
-              </button>
 
-              <Divider label={t('orContinue')} />
+                <button
+                  type="submit"
+                  disabled={status === 'submitting'}
+                  className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-full bg-gradient-to-r from-[#2d6a4f] to-[#1b4332] text-white font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-60 disabled:translate-y-0 transition-all"
+                >
+                  {status === 'submitting' ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      {t('submitting')}
+                    </>
+                  ) : (
+                    t('submitSignIn')
+                  )}
+                </button>
 
-              <button
-                type="button"
-                onClick={handleGoogle}
-                disabled={status === 'submitting'}
-                className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-full bg-white border border-gray-200 text-gray-700 font-semibold text-sm hover:bg-gray-50 transition-colors"
-              >
-                <GoogleIcon className="w-5 h-5" />
-                {t('google')}
-              </button>
+                <Divider label={t('orContinue')} />
 
-              <p className="text-center text-xs text-gray-500 pt-3">
-                {t('noAccount')}{' '}
                 <button
                   type="button"
-                  onClick={() => setMode('register')}
-                  className="text-[#2d6a4f] font-semibold hover:underline"
+                  onClick={handleGoogle}
+                  disabled={status === 'submitting'}
+                  className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-full bg-white border border-gray-200 text-gray-700 font-semibold text-sm hover:bg-gray-50 hover:border-gray-300 transition-colors"
                 >
-                  {t('createOne')}
+                  <GoogleIcon className="w-5 h-5" />
+                  {t('google')}
                 </button>
-              </p>
-            </form>
-          ) : (
-            <form onSubmit={handleRegister} className="space-y-4">
-              <Field label={t('name')} htmlFor="name" Icon={UserIcon}>
-                <input
-                  ref={firstInputRef}
-                  id="name"
-                  required
-                  value={form.name}
-                  onChange={(e) => updateField('name', e.target.value)}
-                  placeholder="Mohammad Karim"
-                  className="auth-input"
-                  autoComplete="name"
-                />
-              </Field>
-              <Field label={`${t('phone')} *`} htmlFor="phone" Icon={Phone} hint={t('phoneHint')}>
-                <input
-                  id="phone"
-                  required
-                  type="tel"
-                  value={form.phone}
-                  onChange={(e) => updateField('phone', e.target.value)}
-                  placeholder="+88 01XXXXXXXXX"
-                  className="auth-input"
-                  autoComplete="tel"
-                />
-              </Field>
-              <Field label={t('email')} htmlFor="email" Icon={Mail}>
-                <input
-                  id="email"
-                  required
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => updateField('email', e.target.value)}
-                  placeholder="you@example.com"
-                  className="auth-input"
-                  autoComplete="email"
-                />
-              </Field>
-              <Field label={t('password')} htmlFor="password-new" Icon={Lock} hint={t('passwordHint')}>
-                <div className="relative">
-                  <input
-                    id="password-new"
-                    required
-                    type={showPassword ? 'text' : 'password'}
-                    minLength={8}
-                    value={form.password}
-                    onChange={(e) => updateField('password', e.target.value)}
-                    placeholder="••••••••"
-                    className="auth-input pr-10"
-                    autoComplete="new-password"
-                  />
+
+                <p className="text-center text-xs text-gray-500 pt-2">
+                  {t('noAccount')}{' '}
                   <button
                     type="button"
-                    onClick={() => setShowPassword((s) => !s)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    onClick={() => setMode('register')}
+                    className="text-[#2d6a4f] font-semibold hover:underline"
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {t('createOne')}
                   </button>
-                </div>
-              </Field>
+                </p>
+              </form>
+            ) : (
+              <form onSubmit={handleRegister} className="space-y-3.5">
+                <Field label={t('name')} htmlFor="name" Icon={UserIcon}>
+                  <input
+                    ref={firstInputRef}
+                    id="name"
+                    required
+                    value={form.name}
+                    onChange={(e) => updateField('name', e.target.value)}
+                    placeholder="Mohammad Karim"
+                    className="auth-input"
+                    autoComplete="name"
+                  />
+                </Field>
+                <Field label={`${t('phone')} *`} htmlFor="phone" Icon={Phone} hint={t('phoneHint')}>
+                  <input
+                    id="phone"
+                    required
+                    type="tel"
+                    value={form.phone}
+                    onChange={(e) => updateField('phone', e.target.value)}
+                    placeholder="01XXXXXXXXX"
+                    className="auth-input"
+                    autoComplete="tel"
+                  />
+                </Field>
+                <Field label={t('email')} htmlFor="email" Icon={Mail}>
+                  <input
+                    id="email"
+                    required
+                    type="email"
+                    value={form.email}
+                    onChange={(e) => updateField('email', e.target.value)}
+                    placeholder="you@example.com"
+                    className="auth-input"
+                    autoComplete="email"
+                  />
+                </Field>
+                <Field label={t('password')} htmlFor="password-new" Icon={Lock} hint={t('passwordHint')}>
+                  <div className="relative">
+                    <input
+                      id="password-new"
+                      required
+                      type={showPassword ? 'text' : 'password'}
+                      minLength={8}
+                      value={form.password}
+                      onChange={(e) => updateField('password', e.target.value)}
+                      placeholder="••••••••"
+                      className="auth-input pr-10"
+                      autoComplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((s) => !s)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </Field>
 
-              {status === 'error' && (
-                <div className="flex items-start gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl p-3">
-                  <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <span>{errorMessage}</span>
-                </div>
-              )}
-
-              {status === 'success' && (
-                <div className="flex items-start gap-2 text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl p-3">
-                  <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <span>Account created.</span>
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={status === 'submitting'}
-                className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-full bg-gradient-to-r from-[#2d6a4f] to-[#1b4332] text-white font-bold text-sm shadow-md hover:shadow-lg disabled:opacity-60 transition-all"
-              >
-                {status === 'submitting' ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    {t('submitting')}
-                  </>
-                ) : (
-                  t('submitRegister')
+                {status === 'error' && (
+                  <div className="flex items-start gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl p-3">
+                    <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                    <span>{errorMessage}</span>
+                  </div>
                 )}
-              </button>
 
-              <Divider label={t('orContinue')} />
+                {status === 'success' && (
+                  <div className="flex items-start gap-2 text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl p-3">
+                    <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                    <span>Account created. Signing you in…</span>
+                  </div>
+                )}
 
-              <button
-                type="button"
-                onClick={handleGoogle}
-                disabled={status === 'submitting'}
-                className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-full bg-white border border-gray-200 text-gray-700 font-semibold text-sm hover:bg-gray-50 transition-colors"
-              >
-                <GoogleIcon className="w-5 h-5" />
-                {t('google')}
-              </button>
+                <button
+                  type="submit"
+                  disabled={status === 'submitting'}
+                  className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-full bg-gradient-to-r from-[#2d6a4f] to-[#1b4332] text-white font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-60 disabled:translate-y-0 transition-all"
+                >
+                  {status === 'submitting' ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      {t('submitting')}
+                    </>
+                  ) : (
+                    t('submitRegister')
+                  )}
+                </button>
 
-              <p className="text-center text-xs text-gray-500 pt-3">
-                {t('haveAccount')}{' '}
+                <Divider label={t('orContinue')} />
+
                 <button
                   type="button"
-                  onClick={() => setMode('signin')}
-                  className="text-[#2d6a4f] font-semibold hover:underline"
+                  onClick={handleGoogle}
+                  disabled={status === 'submitting'}
+                  className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-full bg-white border border-gray-200 text-gray-700 font-semibold text-sm hover:bg-gray-50 hover:border-gray-300 transition-colors"
                 >
-                  {t('switchToSignIn')}
+                  <GoogleIcon className="w-5 h-5" />
+                  {t('google')}
                 </button>
-              </p>
 
-              <p className="text-center text-[11px] text-gray-400 pt-1">{t('agreeTerms')}</p>
-            </form>
-          )}
+                <p className="text-center text-xs text-gray-500 pt-2">
+                  {t('haveAccount')}{' '}
+                  <button
+                    type="button"
+                    onClick={() => setMode('signin')}
+                    className="text-[#2d6a4f] font-semibold hover:underline"
+                  >
+                    {t('switchToSignIn')}
+                  </button>
+                </p>
+
+                <p className="text-center text-[11px] text-gray-400 pt-1">{t('agreeTerms')}</p>
+              </form>
+            )}
+          </div>
         </div>
       </div>
 
@@ -460,12 +465,16 @@ export default function AuthModal({ open, initialMode = 'signin', onClose }: Aut
           border-radius: 0.75rem;
           font-size: 0.875rem;
           outline: none;
-          transition: border 0.2s, box-shadow 0.2s;
-          background: white;
+          transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+          background: #fbfdfb;
         }
         :global(.auth-input:focus) {
           border-color: #2d6a4f;
-          box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.15);
+          background: #fff;
+          box-shadow: 0 0 0 4px rgba(45, 106, 79, 0.12);
+        }
+        :global(.auth-input::placeholder) {
+          color: rgb(156 163 175);
         }
       `}</style>
     </div>
@@ -487,7 +496,7 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={htmlFor} className="block text-xs font-semibold text-gray-700 mb-1.5">
+      <label htmlFor={htmlFor} className="block text-[11px] font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
         {label}
       </label>
       <div className="relative">
@@ -506,7 +515,7 @@ function Divider({ label }: { label: string }) {
         <div className="w-full border-t border-gray-200" />
       </div>
       <div className="relative flex justify-center">
-        <span className="bg-white px-3 text-[11px] text-gray-400 uppercase tracking-wider font-semibold">
+        <span className="bg-white px-3 text-[10px] text-gray-400 uppercase tracking-widest font-semibold">
           {label}
         </span>
       </div>

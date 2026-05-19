@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { signOut, useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
-import { ChevronDown, LogIn, LogOut, UserCircle } from 'lucide-react';
+import { ChevronDown, LogOut, UserCircle } from 'lucide-react';
 import AuthModal from './AuthModal';
 
 type Mode = 'signin' | 'register';
@@ -13,7 +13,7 @@ export default function AuthButton() {
   const ta = useTranslations('auth');
   const { data: session, status } = useSession();
   const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState<Mode>('signin');
+  const [mode, setMode] = useState<Mode>('register');
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -23,10 +23,6 @@ export default function AuthButton() {
     return () => document.removeEventListener('click', close);
   }, [menuOpen]);
 
-  const openSignIn = () => {
-    setMode('signin');
-    setOpen(true);
-  };
   const openRegister = () => {
     setMode('register');
     setOpen(true);
@@ -89,22 +85,13 @@ export default function AuthButton() {
 
   return (
     <>
-      <div className="flex items-center gap-1.5">
-        <button
-          onClick={openSignIn}
-          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-semibold text-gray-700 hover:text-[#2d6a4f] hover:bg-green-50/60 transition-colors"
-        >
-          <LogIn className="w-4 h-4" />
-          {t('signIn')}
-        </button>
-        <button
-          onClick={openRegister}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-[#2d6a4f] to-[#1b4332] text-white text-sm font-bold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
-        >
-          <UserCircle className="w-4 h-4" />
-          {t('register')}
-        </button>
-      </div>
+      <button
+        onClick={openRegister}
+        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-[#2d6a4f] to-[#1b4332] text-white text-sm font-bold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+      >
+        <UserCircle className="w-4 h-4" />
+        {t('register')}
+      </button>
       <AuthModal open={open} initialMode={mode} onClose={() => setOpen(false)} />
     </>
   );
