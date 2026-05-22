@@ -3,9 +3,13 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
+// Vercel sets VERCEL=1 in its build environment. There it needs the default
+// `.next` output dir and handles its own serverless packaging, so the cPanel-
+// only `distDir`/`output: standalone` settings are applied everywhere else.
+const isVercel = process.env.VERCEL === '1';
+
 const nextConfig: NextConfig = {
-  distDir: 'build',
-  output: 'standalone',
+  ...(isVercel ? {} : { distDir: 'build', output: 'standalone' as const }),
   compress: true,
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
