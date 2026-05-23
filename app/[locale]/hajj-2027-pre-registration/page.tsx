@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Hajj2027RegistrationForm from '@/components/home/Hajj2027RegistrationForm';
@@ -64,6 +65,7 @@ export default async function Hajj2027Page({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const whatsappLink = buildWhatsAppLink(HAJJ_2027_PRIMARY_WHATSAPP, HAJJ_2027_WHATSAPP_MESSAGE);
 
   return (

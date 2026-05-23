@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import PackageCard from '@/components/packages/PackageCard';
@@ -6,6 +7,7 @@ import { Compass } from 'lucide-react';
 
 export default async function UmrahPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const isBn = locale === 'bn';
   const packages = getPackagesByCategory('umrah');
 

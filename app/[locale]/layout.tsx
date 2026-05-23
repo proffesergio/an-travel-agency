@@ -1,7 +1,12 @@
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
+
+// Pre-render both locales so the [locale] segment is statically generated.
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
 
 export default async function LocaleLayout({
   children,
@@ -15,6 +20,10 @@ export default async function LocaleLayout({
   if (!routing.locales.includes(locale as 'en' | 'bn')) {
     notFound();
   }
+
+  // Required for static rendering with next-intl — without it, next-intl
+  // reads headers() at request time and trips DYNAMIC_SERVER_USAGE.
+  setRequestLocale(locale);
 
   const messages = await getMessages();
 
