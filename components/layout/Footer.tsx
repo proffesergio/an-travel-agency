@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Code, Heart, Mail, MapPin, MessageCircle, Phone, Send } from 'lucide-react';
@@ -33,7 +32,11 @@ const PHONES = [
 ];
 
 const SOCIALS = [
-  { label: 'Facebook', href: 'https://facebook.com/atharnurtravels', Icon: FacebookIcon },
+  {
+    label: 'Facebook',
+    href: 'https://www.facebook.com/people/%E0%A6%86%E0%A6%A4%E0%A6%B9%E0%A6%BE%E0%A6%B0-%E0%A6%A8%E0%A7%82%E0%A6%B0%E0%A7%81-%E0%A6%9F%E0%A7%8D%E0%A6%B0%E0%A6%BE%E0%A6%AD%E0%A7%87%E0%A6%B2%E0%A6%B8-ATHAR-NUR-Travel/61589306429035/',
+    Icon: FacebookIcon,
+  },
   { label: 'Instagram', href: 'https://instagram.com/atharnurtravels', Icon: InstagramIcon },
   { label: 'YouTube', href: 'https://youtube.com/@atharnurtravels', Icon: YoutubeIcon },
   { label: 'LinkedIn', href: 'https://linkedin.com/company/atharnurtravels', Icon: LinkedinIcon },
@@ -41,22 +44,19 @@ const SOCIALS = [
   { label: 'Telegram', href: 'https://t.me/atharnurtravels', Icon: Send },
 ];
 
-export default function Footer({ locale }: { locale: string }) {
+// Brand-coloured inline payment badges — self-contained, no external assets.
+const PAYMENT_METHODS: { name: string; bg: string; text: string; label: string; sub?: string }[] = [
+  { name: 'VISA',       bg: '#1A1F71', text: '#ffffff', label: 'VISA' },
+  { name: 'Mastercard', bg: '#ffffff', text: '#1a1a1a', label: 'MC', sub: 'MasterCard' },
+  { name: 'bKash',      bg: '#E2136E', text: '#ffffff', label: 'bKash' },
+  { name: 'Nagad',      bg: '#F26522', text: '#ffffff', label: 'Nagad' },
+  { name: 'Rocket',     bg: '#8B2D7E', text: '#ffffff', label: 'Rocket' },
+  { name: 'SSLCommerz', bg: '#0a3d62', text: '#ffffff', label: 'SSL', sub: 'Commerz' },
+];
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default function Footer(_props: { locale: string }) {
   const t = useTranslations('footer');
-  const nav = useTranslations('nav');
-
-  const services = [
-    { href: `/${locale}/hajj`, label: nav('hajj') },
-    { href: `/${locale}/umrah`, label: nav('umrah') },
-    { href: `/${locale}/tours`, label: nav('tours') },
-    { href: `/${locale}/air-ticketing`, label: nav('airTicketing') },
-    { href: `/${locale}/hajj-2027-pre-registration`, label: 'হজ্ব ২০২৭' },
-  ];
-
-  const company = [
-    { href: `/${locale}/about`, label: nav('about') },
-    { href: `/${locale}/contact`, label: nav('contact') },
-  ];
 
   return (
     <footer className="relative bg-[#0f2d23] text-white overflow-hidden">
@@ -71,7 +71,7 @@ export default function Footer({ locale }: { locale: string }) {
         }}
       />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative w-full px-4 sm:px-6 lg:px-10 xl:px-14">
         {/* Top: brand + links */}
         <div className="py-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10">
           {/* Brand */}
@@ -101,7 +101,7 @@ export default function Footer({ locale }: { locale: string }) {
                   target="_blank"
                   rel="noreferrer"
                   aria-label={label}
-                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#74c69d] hover:text-[#1b4332] flex items-center justify-center transition-all hover:-translate-y-0.5"
+                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center transition-all duration-200 hover:bg-[#74c69d] hover:text-[#1b4332] hover:-translate-y-0.5 hover:shadow-lg hover:scale-110 active:scale-95"
                 >
                   <Icon className="w-4 h-4" />
                 </a>
@@ -109,42 +109,31 @@ export default function Footer({ locale }: { locale: string }) {
             </div>
           </div>
 
-          {/* Services */}
-          <div className="lg:col-span-2">
+          {/* Payment Methods */}
+          <div className="lg:col-span-4">
             <h3 className="font-semibold text-green-200 uppercase tracking-wider text-xs mb-4">
-              Services
+              {t('paymentMethods')}
             </h3>
-            <ul className="space-y-2.5">
-              {services.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-green-100/80 text-sm hover:text-white transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
+            <div className="flex flex-wrap gap-2.5">
+              {PAYMENT_METHODS.map((p) => (
+                <div
+                  key={p.name}
+                  title={p.name}
+                  className="flex items-center justify-center min-w-[68px] h-10 px-3 rounded-lg ring-1 ring-white/10 shadow-sm font-extrabold text-xs tracking-wide cursor-default transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:ring-white/30"
+                  style={{ backgroundColor: p.bg, color: p.text }}
+                >
+                  <span className="leading-none">{p.label}</span>
+                  {p.sub && (
+                    <span className="ml-1 text-[10px] font-semibold opacity-80 leading-none">
+                      {p.sub}
+                    </span>
+                  )}
+                </div>
               ))}
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div className="lg:col-span-2">
-            <h3 className="font-semibold text-green-200 uppercase tracking-wider text-xs mb-4">
-              Company
-            </h3>
-            <ul className="space-y-2.5">
-              {company.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-green-100/80 text-sm hover:text-white transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            </div>
+            <p className="mt-4 text-xs text-green-300/70">
+              {t('paymentNote')}
+            </p>
           </div>
 
           {/* Contact */}

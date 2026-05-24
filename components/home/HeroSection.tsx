@@ -29,8 +29,16 @@ export default function HeroSection({ locale }: { locale: string }) {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      <div className="relative z-10 w-full px-4 sm:px-6 lg:px-10 xl:px-14 py-24">
         <div className="max-w-2xl">
+          {/* Bangla motto — site tagline */}
+          <p
+            lang="bn"
+            className="mb-4 text-base sm:text-lg font-semibold text-[#f4a261] tracking-wide drop-shadow-sm"
+          >
+            📝 ইবাদত আপনার · সেবা আমাদের
+          </p>
+
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-[#74c69d]/20 border border-[#74c69d]/40 backdrop-blur-sm rounded-full px-4 py-1.5 mb-6">
             <span className="w-2 h-2 rounded-full bg-[#74c69d] animate-pulse" />
@@ -51,14 +59,14 @@ export default function HeroSection({ locale }: { locale: string }) {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href={`/${locale}/hajj`}
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#f4a261] text-white font-bold text-base hover:bg-[#e8894a] transition-colors shadow-lg"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#f4a261] text-white font-bold text-base shadow-lg transition-all duration-300 hover:bg-[#e8894a] hover:shadow-2xl hover:-translate-y-0.5 active:scale-95"
             >
               {t('ctaPackages')}
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
             <Link
               href={`/${locale}/contact`}
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/30 text-white font-semibold text-base hover:bg-white/20 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/30 text-white font-semibold text-base transition-all duration-300 hover:bg-white/20 hover:border-white/60 hover:-translate-y-0.5 active:scale-95"
             >
               {t('ctaContact')}
             </Link>

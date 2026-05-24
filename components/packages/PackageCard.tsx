@@ -26,9 +26,9 @@ const CATEGORY_BADGE: Record<string, string> = {
 };
 
 const FALLBACK_IMAGE: Record<string, string> = {
-  hajj: '/images/hajj-hero.jpg',
-  umrah: '/images/hajj-hero.jpg',
-  tour: '/images/hajj-hero.jpg',
+  hajj: 'https://images.unsplash.com/photo-1580418827493-f2b22c0a76cb?auto=format&fit=crop&w=1200&q=80',
+  umrah: 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1200&q=80',
+  tour: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1200&q=80',
 };
 
 export default function PackageCard({
@@ -47,7 +47,7 @@ export default function PackageCard({
   return (
     <Link
       href={href}
-      className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-[#74c69d]/40 hover:-translate-y-1 flex flex-col h-full"
+      className="group block bg-white rounded-2xl overflow-hidden shadow-sm transition-all duration-300 ease-out border border-gray-100 hover:shadow-2xl hover:border-[#74c69d]/60 hover:-translate-y-1.5 hover:ring-1 hover:ring-[#74c69d]/30 active:scale-[0.99] flex flex-col h-full"
     >
       {/* Image */}
       <div className="relative h-52 bg-gray-200 overflow-hidden">

@@ -10,7 +10,7 @@ export const ALL_PACKAGES = [
     duration: '40 Days',
     durationBn: '৪০ দিন',
     featured: true,
-    imageUrl: '/images/hajj-hero.jpg',
+    imageUrl: 'https://images.unsplash.com/photo-1580418827493-f2b22c0a76cb?auto=format&fit=crop&w=1200&q=80',
     description:
       'A complete Hajj package for budget-conscious pilgrims. Includes return flights from Dhaka, Makkah & Madinah hotel stays, visa processing, and full guidance from experienced Mutawwif.',
     descriptionBn:
@@ -46,7 +46,7 @@ export const ALL_PACKAGES = [
     duration: '40 Days',
     durationBn: '৪০ দিন',
     featured: false,
-    imageUrl: '/images/hajj-hero.jpg',
+    imageUrl: 'https://images.unsplash.com/photo-1627728734379-a5f8c099763e?auto=format&fit=crop&w=1200&q=80',
     description:
       'An upgraded Hajj experience with closer hotel accommodation to Haram, air-conditioned Mina tents, and dedicated group support.',
     descriptionBn:
@@ -84,7 +84,7 @@ export const ALL_PACKAGES = [
     duration: '14 Days',
     durationBn: '১৪ দিন',
     featured: true,
-    imageUrl: '/images/hajj-hero.jpg',
+    imageUrl: 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1200&q=80',
     description:
       'A spiritually enriching 14-day Umrah package covering both Makkah and Madinah with comfortable accommodation and full support.',
     descriptionBn:
@@ -117,7 +117,7 @@ export const ALL_PACKAGES = [
     duration: '21 Days',
     durationBn: '২১ দিন',
     featured: false,
-    imageUrl: '/images/hajj-hero.jpg',
+    imageUrl: 'https://images.unsplash.com/photo-1592326871020-04f58c1a52f3?auto=format&fit=crop&w=1200&q=80',
     description:
       'An extended 21-day premium Umrah experience with 4-star hotels, private transfers, and an extended Madinah stay.',
     descriptionBn:
@@ -152,7 +152,7 @@ export const ALL_PACKAGES = [
     duration: '6 Days',
     durationBn: '৬ দিন',
     featured: true,
-    imageUrl: '/images/hajj-hero.jpg',
+    imageUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1200&q=80',
     description:
       'Explore the dazzling city of Dubai — Burj Khalifa, Dubai Mall, Desert Safari, and more — in a 6-day fully guided tour.',
     descriptionBn:
@@ -187,7 +187,7 @@ export const ALL_PACKAGES = [
     duration: '8 Days',
     durationBn: '৮ দিন',
     featured: false,
-    imageUrl: '/images/hajj-hero.jpg',
+    imageUrl: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=1200&q=80',
     description:
       'Experience the best of Malaysia — Kuala Lumpur\'s iconic skyline, Genting Highlands, Langkawi beaches, and Batu Caves.',
     descriptionBn:
@@ -223,7 +223,7 @@ export const ALL_PACKAGES = [
     duration: '7 Days',
     durationBn: '৭ দিন',
     featured: false,
-    imageUrl: '/images/hajj-hero.jpg',
+    imageUrl: 'https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=1200&q=80',
     description:
       'Bangkok temples, Pattaya beaches, Coral Island, and the vibrant Thai night markets — all in one unforgettable week.',
     descriptionBn:

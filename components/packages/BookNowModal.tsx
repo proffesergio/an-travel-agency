@@ -6,10 +6,13 @@ import {
   ArrowRight,
   CalendarClock,
   CheckCircle2,
+  FileText,
+  IdCard,
   Loader2,
   Mail,
   MapPin,
   Phone,
+  Upload,
   User as UserIcon,
   Users,
   X,
@@ -34,6 +37,7 @@ interface FormState {
   email: string;
   passengers: string;
   preferredDate: string;
+  passportNumber: string;
   notes: string;
 }
 
@@ -43,6 +47,7 @@ const EMPTY: FormState = {
   email: '',
   passengers: '1',
   preferredDate: '',
+  passportNumber: '',
   notes: '',
 };
 
@@ -57,6 +62,8 @@ export default function BookNowModal({
 }: BookNowModalProps) {
   const [stage, setStage] = useState<'info' | 'payment'>('info');
   const [form, setForm] = useState<FormState>(EMPTY);
+  const [passportFile, setPassportFile] = useState<File | null>(null);
+  const [passportPreview, setPassportPreview] = useState<string | null>(null);
   const [enquiryId, setEnquiryId] = useState<string>('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string>('');
@@ -66,12 +73,25 @@ export default function BookNowModal({
     if (open) {
       setStage('info');
       setForm(EMPTY);
+      setPassportFile(null);
+      setPassportPreview((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return null;
+      });
       setEnquiryId('');
       setError('');
       setSubmitting(false);
       requestAnimationFrame(() => firstInputRef.current?.focus());
     }
   }, [open]);
+
+  const onPassportFile = (file: File | null) => {
+    setPassportFile(file);
+    setPassportPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return file && file.type.startsWith('image/') ? URL.createObjectURL(file) : null;
+    });
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -100,6 +120,8 @@ export default function BookNowModal({
     const composedMessage = [
       `Pre-booking request for "${packageTitle}".`,
       form.preferredDate ? `Preferred date: ${form.preferredDate}` : null,
+      form.passportNumber ? `Passport No: ${form.passportNumber}` : null,
+      passportFile ? `Passport image attached at booking: ${passportFile.name}` : null,
       form.notes ? `Notes: ${form.notes}` : null,
     ]
       .filter(Boolean)
@@ -256,6 +278,85 @@ export default function BookNowModal({
                   </Field>
                 </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Field
+                    label="Passport number"
+                    htmlFor="bn-passport"
+                    Icon={IdCard}
+                    hint="Required for international travel"
+                  >
+                    <input
+                      id="bn-passport"
+                      type="text"
+                      value={form.passportNumber}
+                      onChange={(e) => update('passportNumber', e.target.value.toUpperCase())}
+                      placeholder="e.g. A01234567"
+                      className="bn-input uppercase tracking-wider"
+                      autoComplete="off"
+                    />
+                  </Field>
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
+                      Passport image
+                    </label>
+                    <label
+                      htmlFor="bn-passport-file"
+                      className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 border-dashed cursor-pointer transition-colors ${
+                        passportFile
+                          ? 'border-[#74c69d] bg-green-50/60'
+                          : 'border-stone-300 bg-white hover:border-[#74c69d] hover:bg-green-50/30'
+                      }`}
+                    >
+                      {passportPreview ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={passportPreview}
+                          alt="Passport preview"
+                          className="w-10 h-10 rounded-md object-cover flex-shrink-0"
+                        />
+                      ) : (
+                        <span className="w-10 h-10 rounded-md bg-stone-100 flex items-center justify-center flex-shrink-0">
+                          {passportFile ? (
+                            <FileText className="w-5 h-5 text-[#2d6a4f]" />
+                          ) : (
+                            <Upload className="w-5 h-5 text-gray-400" />
+                          )}
+                        </span>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-gray-800 truncate">
+                          {passportFile ? passportFile.name : 'Upload passport copy'}
+                        </p>
+                        <p className="text-[11px] text-gray-500">
+                          {passportFile
+                            ? `${(passportFile.size / 1024).toFixed(0)} KB · JPG / PNG / PDF`
+                            : 'JPG, PNG or PDF · Max 5MB'}
+                        </p>
+                      </div>
+                      {passportFile && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            onPassportFile(null);
+                          }}
+                          className="text-gray-500 hover:text-red-600"
+                          aria-label="Remove passport image"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      )}
+                      <input
+                        id="bn-passport-file"
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp,application/pdf"
+                        className="sr-only"
+                        onChange={(e) => onPassportFile(e.target.files?.[0] ?? null)}
+                      />
+                    </label>
+                  </div>
+                </div>
+
                 <Field
                   label="Anything we should know?"
                   htmlFor="bn-notes"
@@ -308,6 +409,33 @@ export default function BookNowModal({
                   <CheckCircle2 className="w-4 h-4" />
                   Slot reserved for {form.name}. Complete the pre-booking fee to confirm.
                 </div>
+
+                {(form.passportNumber || passportFile) && (
+                  <div className="flex items-start gap-3 text-xs bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5">
+                    <IdCard className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#2d6a4f]" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-gray-800">Passport on file</p>
+                      <p className="text-gray-600 mt-0.5">
+                        {form.passportNumber && (
+                          <span className="font-mono tracking-wider mr-2">
+                            {form.passportNumber}
+                          </span>
+                        )}
+                        {passportFile && (
+                          <span className="text-gray-500">· {passportFile.name}</span>
+                        )}
+                      </p>
+                    </div>
+                    {passportPreview && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={passportPreview}
+                        alt="Passport"
+                        className="w-12 h-12 rounded-md object-cover flex-shrink-0"
+                      />
+                    )}
+                  </div>
+                )}
                 <BookingPaymentStep
                   enquiryId={enquiryId}
                   customerName={form.name}

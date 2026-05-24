@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Send } from 'lucide-react';
+import { FileText, IdCard, Send, Upload, X } from 'lucide-react';
 
 interface BookingEnquiryFormProps {
   packageTitle: string;
@@ -19,9 +19,20 @@ export default function BookingEnquiryForm({
     email: '',
     phone: '',
     passengers: '1',
+    passportNumber: '',
     message: '',
   });
+  const [passportFile, setPassportFile] = useState<File | null>(null);
+  const [passportPreview, setPassportPreview] = useState<string | null>(null);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  const onPassportFile = (file: File | null) => {
+    setPassportFile(file);
+    setPassportPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return file && file.type.startsWith('image/') ? URL.createObjectURL(file) : null;
+    });
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -33,12 +44,23 @@ export default function BookingEnquiryForm({
     e.preventDefault();
     setStatus('loading');
     try {
+      const composedMessage = [
+        form.passportNumber ? `Passport No: ${form.passportNumber}` : null,
+        passportFile ? `Passport image attached at enquiry: ${passportFile.name}` : null,
+        form.message ? form.message : null,
+      ]
+        .filter(Boolean)
+        .join('\n');
+
       const res = await fetch('/api/enquiries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...form,
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
           passengers: parseInt(form.passengers),
+          message: composedMessage,
           packageId,
           packageTitle,
           category,
@@ -46,7 +68,8 @@ export default function BookingEnquiryForm({
       });
       if (!res.ok) throw new Error();
       setStatus('success');
-      setForm({ name: '', email: '', phone: '', passengers: '1', message: '' });
+      setForm({ name: '', email: '', phone: '', passengers: '1', passportNumber: '', message: '' });
+      onPassportFile(null);
     } catch {
       setStatus('error');
     }
@@ -118,6 +141,81 @@ export default function BookingEnquiryForm({
           ))}
           <option value="11">10+ (Group)</option>
         </select>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+            <IdCard className="w-3.5 h-3.5 text-[#2d6a4f]" />
+            Passport Number
+          </label>
+          <input
+            name="passportNumber"
+            value={form.passportNumber}
+            onChange={(e) => setForm({ ...form, passportNumber: e.target.value.toUpperCase() })}
+            placeholder="e.g. A01234567"
+            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#2d6a4f] focus:ring-2 focus:ring-[#2d6a4f]/20 outline-none text-sm uppercase tracking-wider"
+            autoComplete="off"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Passport Image</label>
+          <label
+            htmlFor="enq-passport-file"
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 border-dashed cursor-pointer transition-colors ${
+              passportFile
+                ? 'border-[#74c69d] bg-green-50/60'
+                : 'border-stone-300 bg-white hover:border-[#74c69d] hover:bg-green-50/30'
+            }`}
+          >
+            {passportPreview ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={passportPreview}
+                alt="Passport preview"
+                className="w-10 h-10 rounded-md object-cover flex-shrink-0"
+              />
+            ) : (
+              <span className="w-10 h-10 rounded-md bg-stone-100 flex items-center justify-center flex-shrink-0">
+                {passportFile ? (
+                  <FileText className="w-5 h-5 text-[#2d6a4f]" />
+                ) : (
+                  <Upload className="w-5 h-5 text-gray-400" />
+                )}
+              </span>
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-gray-800 truncate">
+                {passportFile ? passportFile.name : 'Upload passport copy'}
+              </p>
+              <p className="text-[11px] text-gray-500">
+                {passportFile
+                  ? `${(passportFile.size / 1024).toFixed(0)} KB`
+                  : 'JPG, PNG or PDF · Max 5MB'}
+              </p>
+            </div>
+            {passportFile && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onPassportFile(null);
+                }}
+                className="text-gray-500 hover:text-red-600"
+                aria-label="Remove passport image"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+            <input
+              id="enq-passport-file"
+              type="file"
+              accept="image/jpeg,image/jpg,image/png,image/webp,application/pdf"
+              className="sr-only"
+              onChange={(e) => onPassportFile(e.target.files?.[0] ?? null)}
+            />
+          </label>
+        </div>
       </div>
 
       <div>

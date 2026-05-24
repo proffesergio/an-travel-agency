@@ -301,3 +301,151 @@
     animation: none;
   }
 }
+
+/* ----- Global interaction polish ----- */
+/* Anything tagged interactive gets a tasteful lift + soft shadow */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -10px rgba(27, 67, 50, 0.25);
+}
+.hover-lift:active {
+  transform: translateY(0);
+}
+
+/* Default cursor + soft scale on buttons & anchors site-wide */
+@layer base {
+  a, button {
+    transition-property: color, background-color, border-color, box-shadow,
+      transform, opacity;
+    transition-duration: 200ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  a:not([disabled]):active,
+  button:not([disabled]):active {
+    transform: scale(0.97);
+  }
+}
+
+/* Nav link hover sweep effect (used by .nav-link in Navbar) */
+.nav-link {
+  position: relative;
+  overflow: hidden;
+}
+.nav-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 0%, rgba(116, 198, 157, 0.18) 50%, transparent 100%);
+  transform: translateX(-110%);
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+.nav-link:hover::before {
+  transform: translateX(110%);
+}
+
+/* ----- Atom / nucleus route-transition loader ----- */
+@keyframes atom-orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes atom-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(244, 162, 97, 0.55); }
+  50% { transform: scale(1.18); box-shadow: 0 0 0 10px rgba(244, 162, 97, 0); }
+}
+@keyframes atom-fadein {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.atom-loader {
+  position: relative;
+  width: 96px;
+  height: 96px;
+}
+.atom-loader .nucleus {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 30% 30%, #f4a261 0%, #d97706 70%);
+  animation: atom-pulse 1.4s ease-in-out infinite;
+  box-shadow: 0 0 12px rgba(244, 162, 97, 0.6);
+}
+.atom-loader .orbit {
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  border-top-color: #74c69d;
+  border-right-color: rgba(116, 198, 157, 0.35);
+  border-radius: 50%;
+  animation: atom-orbit 1.3s linear infinite;
+}
+.atom-loader .orbit.two {
+  border-top-color: transparent;
+  border-bottom-color: #2d6a4f;
+  border-left-color: rgba(45, 106, 79, 0.4);
+  transform: rotate(60deg);
+  animation-duration: 1.7s;
+  animation-direction: reverse;
+}
+.atom-loader .orbit.three {
+  border-top-color: transparent;
+  border-right-color: #f4a261;
+  border-left-color: rgba(244, 162, 97, 0.35);
+  transform: rotate(-60deg);
+  animation-duration: 2.1s;
+}
+.atom-loader .electron {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  top: -4px;
+  left: 50%;
+  margin-left: -4px;
+}
+
+.atom-loader-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+  background: radial-gradient(circle at center, rgba(15, 45, 35, 0.92) 0%, rgba(10, 25, 20, 0.96) 100%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #e7f7ee;
+  animation: atom-fadein 0.2s ease-out;
+}
+.atom-loader-overlay .atom-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #74c69d;
+}
+.atom-loader-overlay .atom-sub {
+  font-size: 0.7rem;
+  color: rgba(231, 247, 238, 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atom-loader .nucleus,
+  .atom-loader .orbit {
+    animation: none;
+  }
+  .nav-link::before {
+    transition: none;
+  }
+}
