@@ -26,9 +26,10 @@ const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 const PHONES = [
-  { number: '+966 5373 11069', countryCode: '+966', tel: '+966537311069', flag: '🇸🇦', country: 'KSA' },
   { number: '+88 01843 431743', countryCode: '+880', tel: '+8801843431743', flag: '🇧🇩', country: 'BD' },
   { number: '01846-805281', countryCode: '+880', tel: '+8801846805281', flag: '🇧🇩', country: 'BD' },
+  { number: '+966 5373 11069', countryCode: '+966', tel: '+966537311069', flag: '🇸🇦', country: 'KSA' },
+
 ];
 
 const SOCIALS = [
