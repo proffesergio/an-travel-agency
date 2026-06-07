@@ -23,9 +23,10 @@ interface UploadSlotProps {
   file: File | null;
   preview: string | null;
   onChange: (file: File | null) => void;
+  recommended?: boolean;
 }
 
-function UploadSlot({ id, label, hint, Icon, file, preview, onChange }: UploadSlotProps) {
+function UploadSlot({ id, label, hint, Icon, file, preview, onChange, recommended }: UploadSlotProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -35,6 +36,8 @@ function UploadSlot({ id, label, hint, Icon, file, preview, onChange }: UploadSl
         className={`relative flex flex-col items-center justify-center w-full h-40 rounded-xl border-2 border-dashed cursor-pointer transition-all overflow-hidden ${
           file
             ? 'border-[#74c69d] bg-green-50/60'
+            : recommended
+            ? 'border-amber-400 bg-amber-50/40 hover:border-amber-500 hover:bg-amber-50/70'
             : 'border-stone-300 bg-white hover:border-[#74c69d] hover:bg-green-50/30'
         }`}
       >
@@ -69,9 +72,14 @@ function UploadSlot({ id, label, hint, Icon, file, preview, onChange }: UploadSl
           </div>
         ) : (
           <div className="flex flex-col items-center text-gray-500 px-3 text-center">
-            <Icon className="w-8 h-8 mb-2 text-[#2d6a4f]" />
+            <Icon className={`w-8 h-8 mb-2 ${recommended ? 'text-amber-600' : 'text-[#2d6a4f]'}`} />
             <span className="text-sm font-semibold text-gray-800">{label}</span>
             <span className="text-[11px] text-gray-500 mt-1">{hint}</span>
+            {recommended && (
+              <span className="mt-1 text-[10px] font-semibold text-amber-700 uppercase tracking-wide">
+                Recommended
+              </span>
+            )}
           </div>
         )}
         <input
@@ -117,7 +125,14 @@ const INITIAL: FormState = {
   notes: '',
 };
 
-export default function Hajj2027RegistrationForm() {
+interface Hajj2027RegistrationFormProps {
+  /** Highlight the passport first-page photo as recommended (still optional). */
+  recommendPassport?: boolean;
+}
+
+export default function Hajj2027RegistrationForm({
+  recommendPassport = false,
+}: Hajj2027RegistrationFormProps) {
   const [form, setForm] = useState<FormState>(INITIAL);
   const [files, setFiles] = useState<Record<FileField, File | null>>({
     passportImage: null,
@@ -320,16 +335,22 @@ export default function Hajj2027RegistrationForm() {
         </div>
         <p className="text-sm text-gray-500 mb-5">
           JPG / PNG / PDF · প্রতিটি ফাইল সর্বোচ্চ 5MB · নিরাপদে সংরক্ষিত
+          {recommendPassport && (
+            <span className="block mt-1 font-medium text-amber-700">
+              দ্রুত বুকিং নিশ্চিত করতে পাসপোর্টের প্রথম পৃষ্ঠার ছবি দেওয়া উত্তম · Passport first-page photo is recommended.
+            </span>
+          )}
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <UploadSlot
             id="passportImage"
-            label="পাসপোর্ট ছবি"
-            hint="Passport copy"
+            label="পাসপোর্ট (প্রথম পৃষ্ঠা)"
+            hint="Passport first / data page"
             Icon={FileText}
             file={files.passportImage}
             preview={previews.passportImage}
             onChange={(f) => setFile('passportImage', f)}
+            recommended={recommendPassport}
           />
           <UploadSlot
             id="nidImage"

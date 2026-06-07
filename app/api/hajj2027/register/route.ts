@@ -144,12 +144,25 @@ export async function POST(request: NextRequest) {
 
     const enquiry = await createEnquiry({
       name: data.name,
+      nameBn: data.nameBn || undefined,
       phone: data.phone,
       email: data.email || '',
       category: 'hajj',
       packageTitle: 'Hajj 2027 Pre-Registration',
       passengers: 1,
       message: messageLines.join('\n'),
+      nidNumber: data.nidNumber || undefined,
+      passportNumber: data.passportNumber || undefined,
+      dateOfBirth: data.dateOfBirth || undefined,
+      address: data.address || undefined,
+      documents:
+        Object.keys(documentUrls).length > 0
+          ? {
+              passportImage: documentUrls.passportImage,
+              nidImage: documentUrls.nidImage,
+              photoImage: documentUrls.photoImage,
+            }
+          : undefined,
     });
 
     return NextResponse.json({

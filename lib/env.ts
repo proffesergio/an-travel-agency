@@ -16,7 +16,11 @@ type EnvKey =
   | 'SMTP_PASSWORD'
   | 'SSLCOMMERZ_STORE_ID'
   | 'SSLCOMMERZ_STORE_PASSWORD'
-  | 'SSLCOMMERZ_IS_LIVE';
+  | 'SSLCOMMERZ_IS_LIVE'
+  | 'PIPRAPAY_BASE_URL'
+  | 'PIPRAPAY_API_KEY'
+  | 'PIPRAPAY_CURRENCY'
+  | 'PAYMENT_GATEWAY';
 
 export function getEnv(key: EnvKey): string | undefined {
   const value = process.env[key];
@@ -43,4 +47,17 @@ export function isCloudinaryConfigured(): boolean {
 
 export function isSmtpConfigured(): boolean {
   return !!getEnv('GMAIL_USER') || !!getEnv('SMTP_HOST');
+}
+
+export function isPiprapayConfigured(): boolean {
+  return !!getEnv('PIPRAPAY_BASE_URL') && !!getEnv('PIPRAPAY_API_KEY');
+}
+
+export function isSslcommerzConfigured(): boolean {
+  return !!getEnv('SSLCOMMERZ_STORE_ID') && !!getEnv('SSLCOMMERZ_STORE_PASSWORD');
+}
+
+/** True when at least one online gateway is usable. */
+export function isOnlinePaymentConfigured(): boolean {
+  return isPiprapayConfigured() || isSslcommerzConfigured();
 }

@@ -1,7 +1,15 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
+/** Uploaded identity/booking documents (Cloudinary secure URLs). */
+export interface IEnquiryDocuments {
+  passportImage?: string;
+  nidImage?: string;
+  photoImage?: string;
+}
+
 export interface IEnquiry extends Document {
   name: string;
+  nameBn?: string;
   email: string;
   phone: string;
   packageId?: string;
@@ -9,12 +17,22 @@ export interface IEnquiry extends Document {
   category: 'hajj' | 'umrah' | 'tour' | 'air-ticketing' | 'general';
   passengers?: number;
   message: string;
+  /** Structured applicant identity captured during booking. */
+  nidNumber?: string;
+  passportNumber?: string;
+  dateOfBirth?: string;
+  address?: string;
+  documents?: IEnquiryDocuments;
   status: 'new' | 'contacted' | 'closed';
   paymentStatus?: 'pending' | 'paid' | 'failed';
-  paymentMethod?: 'bkash' | 'nagad' | 'rocket' | 'bank' | 'card' | 'cash';
+  paymentMethod?: 'bkash' | 'nagad' | 'rocket' | 'bank' | 'card' | 'cash' | 'piprapay' | 'sslcommerz';
   paymentAmount?: number;
   paymentReference?: string;
   transactionId?: string;
+  /** Timestamp the payment was confirmed (paid). */
+  paidAt?: Date;
+  /** PipraPay charge id (pp_id) returned by create-charge; links webhook → enquiry. */
+  ppId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,6 +40,7 @@ export interface IEnquiry extends Document {
 const EnquirySchema = new Schema<IEnquiry>(
   {
     name: { type: String, required: true },
+    nameBn: { type: String },
     email: { type: String, required: true },
     phone: { type: String, required: true },
     packageId: { type: String },
@@ -33,15 +52,26 @@ const EnquirySchema = new Schema<IEnquiry>(
     },
     passengers: { type: Number, default: 1 },
     message: { type: String, default: '' },
+    nidNumber: { type: String },
+    passportNumber: { type: String },
+    dateOfBirth: { type: String },
+    address: { type: String },
+    documents: {
+      passportImage: { type: String },
+      nidImage: { type: String },
+      photoImage: { type: String },
+    },
     status: { type: String, enum: ['new', 'contacted', 'closed'], default: 'new' },
     paymentStatus: { type: String, enum: ['pending', 'paid', 'failed'] },
     paymentMethod: {
       type: String,
-      enum: ['bkash', 'nagad', 'rocket', 'bank', 'card', 'cash'],
+      enum: ['bkash', 'nagad', 'rocket', 'bank', 'card', 'cash', 'piprapay', 'sslcommerz'],
     },
     paymentAmount: { type: Number },
     paymentReference: { type: String },
     transactionId: { type: String },
+    paidAt: { type: Date },
+    ppId: { type: String, index: true },
   },
   { timestamps: true }
 );

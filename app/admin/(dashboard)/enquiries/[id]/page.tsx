@@ -16,6 +16,14 @@ import {
   MessageSquare,
   Package as PackageIcon,
   Trash2,
+  IdCard,
+  CreditCard,
+  Cake,
+  MapPin,
+  FileImage,
+  CheckCircle2,
+  Clock,
+  XCircle,
 } from 'lucide-react';
 import { updateEnquiryStatusAction, deleteEnquiryAction } from './actions';
 
@@ -30,6 +38,29 @@ const statusStyles: Record<string, string> = {
 };
 
 const statusOrder = ['new', 'contacted', 'closed'] as const;
+
+const paymentStatusStyles: Record<string, string> = {
+  paid: 'bg-green-100 text-green-800',
+  pending: 'bg-amber-100 text-amber-800',
+  failed: 'bg-red-100 text-red-800',
+};
+
+const paymentMethodLabels: Record<string, string> = {
+  bkash: 'bKash',
+  nagad: 'Nagad',
+  rocket: 'Rocket',
+  bank: 'Bank Transfer',
+  card: 'Card',
+  cash: 'Cash on Office',
+  piprapay: 'PipraPay (Online)',
+  sslcommerz: 'SSLCommerz (Online)',
+};
+
+const DOCUMENT_LABELS: Record<string, string> = {
+  passportImage: 'Passport',
+  nidImage: 'National ID',
+  photoImage: 'Passport-size Photo',
+};
 
 export default async function AdminEnquiryDetailPage({ params }: PageProps) {
   const { id } = await params;
@@ -135,6 +166,46 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
                 </dt>
                 <dd className="mt-1 text-gray-900">{enquiry.passengers ?? 1}</dd>
               </div>
+              {enquiry.nameBn && (
+                <div>
+                  <dt className="text-xs text-gray-500 flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5" /> Name (Bangla)
+                  </dt>
+                  <dd className="mt-1 text-gray-900">{enquiry.nameBn}</dd>
+                </div>
+              )}
+              {enquiry.nidNumber && (
+                <div>
+                  <dt className="text-xs text-gray-500 flex items-center gap-1.5">
+                    <IdCard className="w-3.5 h-3.5" /> NID Number
+                  </dt>
+                  <dd className="mt-1 text-gray-900 font-mono">{enquiry.nidNumber}</dd>
+                </div>
+              )}
+              {enquiry.passportNumber && (
+                <div>
+                  <dt className="text-xs text-gray-500 flex items-center gap-1.5">
+                    <CreditCard className="w-3.5 h-3.5" /> Passport Number
+                  </dt>
+                  <dd className="mt-1 text-gray-900 font-mono">{enquiry.passportNumber}</dd>
+                </div>
+              )}
+              {enquiry.dateOfBirth && (
+                <div>
+                  <dt className="text-xs text-gray-500 flex items-center gap-1.5">
+                    <Cake className="w-3.5 h-3.5" /> Date of Birth
+                  </dt>
+                  <dd className="mt-1 text-gray-900">{enquiry.dateOfBirth}</dd>
+                </div>
+              )}
+              {enquiry.address && (
+                <div className="sm:col-span-2">
+                  <dt className="text-xs text-gray-500 flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5" /> Address
+                  </dt>
+                  <dd className="mt-1 text-gray-900">{enquiry.address}</dd>
+                </div>
+              )}
               {enquiry.packageTitle && (
                 <div className="sm:col-span-2">
                   <dt className="text-xs text-gray-500 flex items-center gap-1.5">
@@ -145,6 +216,50 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
               )}
             </dl>
           </section>
+
+          {enquiry.documents &&
+            Object.values(enquiry.documents).some(Boolean) && (
+              <section className="bg-white rounded-xl border border-gray-200 p-6">
+                <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4 flex items-center gap-2">
+                  <FileImage className="w-4 h-4" /> Uploaded Documents
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {(['passportImage', 'nidImage', 'photoImage'] as const).map((key) => {
+                    const url = enquiry.documents?.[key];
+                    if (!url) return null;
+                    const isPdf = url.toLowerCase().endsWith('.pdf');
+                    return (
+                      <a
+                        key={key}
+                        href={url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="group block rounded-lg border border-gray-200 overflow-hidden hover:border-[#2d6a4f] hover:shadow-md transition-all"
+                      >
+                        <div className="aspect-[4/3] bg-gray-50 flex items-center justify-center overflow-hidden">
+                          {isPdf ? (
+                            <div className="flex flex-col items-center text-gray-400">
+                              <FileImage className="w-8 h-8 mb-1" />
+                              <span className="text-xs font-medium">PDF</span>
+                            </div>
+                          ) : (
+                            /* eslint-disable-next-line @next/next/no-img-element */
+                            <img
+                              src={url}
+                              alt={DOCUMENT_LABELS[key]}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                            />
+                          )}
+                        </div>
+                        <p className="text-xs font-medium text-gray-700 p-2 text-center">
+                          {DOCUMENT_LABELS[key]}
+                        </p>
+                      </a>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
 
           <section className="bg-white rounded-xl border border-gray-200 p-6">
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-2">
@@ -159,6 +274,78 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
         </div>
 
         <aside className="space-y-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-2">
+              <CreditCard className="w-4 h-4" /> Payment
+            </h2>
+            {enquiry.paymentStatus ? (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">Status</span>
+                  <span
+                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize ${
+                      paymentStatusStyles[enquiry.paymentStatus] ?? 'bg-gray-100 text-gray-800'
+                    }`}
+                  >
+                    {enquiry.paymentStatus === 'paid' ? (
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                    ) : enquiry.paymentStatus === 'failed' ? (
+                      <XCircle className="w-3.5 h-3.5" />
+                    ) : (
+                      <Clock className="w-3.5 h-3.5" />
+                    )}
+                    {enquiry.paymentStatus}
+                  </span>
+                </div>
+                {enquiry.paymentAmount ? (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">Amount</span>
+                    <span className="text-sm font-bold text-gray-900">
+                      ৳{enquiry.paymentAmount.toLocaleString('en-IN')}
+                    </span>
+                  </div>
+                ) : null}
+                {enquiry.paymentMethod && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">Method</span>
+                    <span className="text-sm font-medium text-gray-900">
+                      {paymentMethodLabels[enquiry.paymentMethod] ?? enquiry.paymentMethod}
+                    </span>
+                  </div>
+                )}
+                {enquiry.paymentReference && (
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm text-gray-500">Reference</span>
+                    <span className="text-sm font-mono text-gray-900 truncate max-w-[150px]" title={enquiry.paymentReference}>
+                      {enquiry.paymentReference}
+                    </span>
+                  </div>
+                )}
+                {enquiry.transactionId && (
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm text-gray-500">Txn ID</span>
+                    <span className="text-sm font-mono text-gray-900 truncate max-w-[150px]" title={enquiry.transactionId}>
+                      {enquiry.transactionId}
+                    </span>
+                  </div>
+                )}
+                {enquiry.paidAt && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">Paid at</span>
+                    <span className="text-sm text-gray-700">
+                      {new Date(enquiry.paidAt).toLocaleString('en-US', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      })}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-400">No payment recorded yet.</p>
+            )}
+          </div>
+
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
               Status

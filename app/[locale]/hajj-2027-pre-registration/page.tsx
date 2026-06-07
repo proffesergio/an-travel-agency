@@ -8,6 +8,7 @@ import Hajj2027RegistrationForm from '@/components/home/Hajj2027RegistrationForm
 import {
   ArrowRight,
   Building2,
+  CalendarCheck,
   CheckCircle2,
   Compass,
   IdCard,
@@ -18,7 +19,6 @@ import {
   Star,
 } from 'lucide-react';
 import {
-  HAJJ_2027_PRIMARY_PHONE,
   HAJJ_2027_PRIMARY_WHATSAPP,
   HAJJ_2027_WHATSAPP_MESSAGE,
   HAJJ_SERVICES,
@@ -122,13 +122,13 @@ export default async function Hajj2027Page({
                     </svg>
                     WhatsApp এ যোগাযোগ
                   </a>
-                  <a
-                    href={`tel:${HAJJ_2027_PRIMARY_PHONE}`}
-                    className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white font-semibold transition-all hover:scale-105"
+                  <Link
+                    href={`/${locale}/payment`}
+                    className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-amber-400 hover:bg-amber-500 text-[#1b4332] font-semibold shadow-lg transition-all hover:scale-105"
                   >
-                    <PhoneCall className="w-5 h-5" />
-                    এখনই কল করুন
-                  </a>
+                    <CalendarCheck className="w-5 h-5" />
+                    Book Now
+                  </Link>
                 </div>
 
                 <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-green-100/80 text-sm">
@@ -248,7 +248,7 @@ export default async function Hajj2027Page({
         <section className="py-16 sm:py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <p className="text-sm font-semibold text-[#2d6a4f] tracking-widest uppercase">What's Included</p>
+              <p className="text-sm font-semibold text-[#2d6a4f] tracking-widest uppercase">What&apos;s Included</p>
               <h2 className="mt-2 text-3xl sm:text-4xl font-bold text-gray-900">আমাদের সেবা সমূহ</h2>
               <p className="mt-3 text-gray-600 max-w-2xl mx-auto">
                 ভিসা থেকে জিয়ারা পর্যন্ত — সম্পূর্ণ প্যাকেজে আপনি যা পাচ্ছেন
@@ -387,13 +387,13 @@ export default async function Hajj2027Page({
                   </svg>
                   WhatsApp এ মেসেজ দিন
                 </a>
-                <a
-                  href={`tel:${HAJJ_2027_PRIMARY_PHONE}`}
+                <Link
+                  href={`/${locale}/payment`}
                   className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-amber-400 hover:bg-amber-500 text-[#1b4332] font-semibold shadow-lg transition-transform hover:scale-105"
                 >
-                  <PhoneCall className="w-5 h-5" />
-                  কল করুন
-                </a>
+                  <CalendarCheck className="w-5 h-5" />
+                  Book Now
+                </Link>
               </div>
             </div>
           </div>
@@ -496,13 +496,13 @@ export default async function Hajj2027Page({
             </svg>
             WhatsApp
           </a>
-          <a
-            href={`tel:${HAJJ_2027_PRIMARY_PHONE}`}
-            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-[#1b4332] text-white text-sm font-semibold shadow-xl"
+          <Link
+            href={`/${locale}/payment`}
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-amber-400 text-[#1b4332] text-sm font-semibold shadow-xl"
           >
-            <PhoneCall className="w-4 h-4" />
-            কল করুন
-          </a>
+            <CalendarCheck className="w-4 h-4" />
+            Book Now
+          </Link>
         </div>
       </main>
       <Footer locale={locale} />

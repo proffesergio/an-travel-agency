@@ -8,6 +8,7 @@ import {
   Building2,
   CheckCircle2,
   CreditCard,
+  Globe,
   Loader2,
   ReceiptText,
   Smartphone,
@@ -16,7 +17,7 @@ import {
 
 export const PRE_BOOKING_FEE_BDT = 30000;
 
-export type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'bank' | 'card' | 'cash';
+export type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'bank' | 'card' | 'cash' | 'online';
 
 export interface BookingPaymentStepProps {
   enquiryId: string;
@@ -41,12 +42,13 @@ interface MethodSpec {
   label: string;
   sub: string;
   Icon: React.ComponentType<{ className?: string }>;
-  category: 'mobile' | 'bank' | 'card' | 'cash';
+  category: 'mobile' | 'bank' | 'card' | 'cash' | 'online';
   accent: string;
   iconBg: string;
 }
 
 const METHODS: MethodSpec[] = [
+  { id: 'online', label: 'Pay Online', sub: 'bKash · Nagad · Card — instant', Icon: Globe, category: 'online', accent: 'border-teal-300 hover:border-teal-500', iconBg: 'bg-teal-100 text-teal-600' },
   { id: 'bkash', label: 'bKash', sub: 'Mobile Banking', Icon: Smartphone, category: 'mobile', accent: 'border-pink-300 hover:border-pink-500', iconBg: 'bg-pink-100 text-pink-600' },
   { id: 'nagad', label: 'Nagad', sub: 'Mobile Banking', Icon: Smartphone, category: 'mobile', accent: 'border-orange-300 hover:border-orange-500', iconBg: 'bg-orange-100 text-orange-600' },
   { id: 'rocket', label: 'Rocket', sub: 'Mobile Banking', Icon: Smartphone, category: 'mobile', accent: 'border-purple-300 hover:border-purple-500', iconBg: 'bg-purple-100 text-purple-600' },
@@ -136,6 +138,32 @@ export default function BookingPaymentStep({
     if (!selected) return;
     setStage('submitting');
     setError('');
+
+    // Online gateway: create a charge on whichever gateway is configured
+    // (PipraPay or SSLCommerz) and redirect to its hosted checkout page.
+    if (selected === 'online') {
+      try {
+        const res = await fetch('/api/payment/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enquiryId, amount: feeBdt, bookingLabel }),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok || !json.redirectUrl) {
+          setError(json.error ?? 'Could not start online payment. Please try another method.');
+          setStage('detail');
+          return;
+        }
+        // Hand off to the gateway's hosted checkout.
+        window.location.href = json.redirectUrl;
+        return;
+      } catch {
+        setError('Network error. Please try again.');
+        setStage('detail');
+        return;
+      }
+    }
+
     try {
       const res = await fetch('/api/bookings/payment', {
         method: 'POST',
@@ -274,6 +302,7 @@ export default function BookingPaymentStep({
               amountLabel={`৳ ${formattedFee}`}
             />
           )}
+          {selected === 'online' && <OnlineDetail amountLabel={`৳ ${formattedFee}`} />}
           {selected === 'card' && <CardDetail />}
           {selected === 'cash' && <CashDetail amountLabel={`৳ ${formattedFee}`} />}
 
@@ -296,7 +325,12 @@ export default function BookingPaymentStep({
             {stage === 'submitting' ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                রেকর্ড করা হচ্ছে…
+                {selected === 'online' ? 'পেমেন্ট পেজে নিয়ে যাওয়া হচ্ছে…' : 'রেকর্ড করা হচ্ছে…'}
+              </>
+            ) : selected === 'online' ? (
+              <>
+                <Globe className="w-5 h-5" />
+                Pay ৳{formattedFee} online
               </>
             ) : selected === 'card' ? (
               <>
@@ -415,6 +449,27 @@ function BankDetail({
           className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#2d6a4f] focus:ring-2 focus:ring-[#2d6a4f]/15 outline-none"
         />
       </div>
+    </div>
+  );
+}
+
+function OnlineDetail({ amountLabel }: { amountLabel: string }) {
+  return (
+    <div className="space-y-4">
+      <div className="rounded-2xl bg-gradient-to-br from-teal-50 to-white border border-teal-200 p-5">
+        <p className="text-sm font-semibold text-teal-800">
+          Secure online payment
+        </p>
+        <p className="mt-1 text-xs text-teal-700/80">
+          bKash, Nagad, Rocket, Visa/Mastercard — সব এক পেজে। Continue করলে সিকিউর পেমেন্ট পেজে যাবেন।
+        </p>
+        <p className="mt-3 text-sm text-gray-700">
+          Amount: <span className="font-bold text-gray-900">{amountLabel}</span>
+        </p>
+      </div>
+      <p className="text-xs text-gray-500">
+        🔒 আপনার পেমেন্ট তথ্য Athar Nur Travels সংরক্ষণ করে না — সম্পূর্ণ লেনদেন একটি সিকিউর পেমেন্ট গেটওয়েতে হয়। পেমেন্ট সফল হলে বুকিং স্বয়ংক্রিয়ভাবে নিশ্চিত হবে।
+      </p>
     </div>
   );
 }

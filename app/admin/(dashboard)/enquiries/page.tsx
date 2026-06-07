@@ -7,18 +7,24 @@ import { StatusBadge } from '@/components/admin/StatusBadge';
 import { EmptyState } from '@/components/admin/EmptyState';
 import { DatabaseUnreachableBanner } from '@/components/admin/SetupBanner';
 
+const paymentStatusStyles: Record<string, string> = {
+  paid: 'bg-green-100 text-green-800',
+  pending: 'bg-amber-100 text-amber-800',
+  failed: 'bg-red-100 text-red-800',
+};
+
 export default async function AdminEnquiriesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; category?: string }>;
+  searchParams: Promise<{ status?: string; category?: string; payment?: string }>;
 }) {
   const session = await auth();
-  const { status, category } = await searchParams;
+  const { status, category, payment } = await searchParams;
 
   let enquiries: Awaited<ReturnType<typeof listEnquiries>> = [];
   let dbError: string | undefined;
   try {
-    enquiries = await listEnquiries({ status, category });
+    enquiries = await listEnquiries({ status, category, payment });
     await logActivity({
       action: 'view',
       entityType: 'enquiry',
@@ -31,6 +37,7 @@ export default async function AdminEnquiriesPage({
 
   const statusOptions = ['all', 'new', 'contacted', 'closed'];
   const categoryOptions = ['all', 'hajj', 'umrah', 'tour', 'air-ticketing', 'general'];
+  const paymentOptions = ['all', 'paid', 'pending', 'failed'];
 
   return (
     <div className="p-6">
@@ -71,6 +78,17 @@ export default async function AdminEnquiriesPage({
             {categoryOptions.map((c) => (
               <option key={c} value={c}>
                 {c === 'all' ? 'All Categories' : c === 'air-ticketing' ? 'Air Ticketing' : c.charAt(0).toUpperCase() + c.slice(1)}
+              </option>
+            ))}
+          </select>
+          <select
+            name="payment"
+            defaultValue={payment || 'all'}
+            className="px-4 py-2 border border-gray-200 rounded-lg focus:border-[#2d6a4f] focus:ring-2 focus:ring-[#2d6a4f]/20 outline-none bg-white"
+          >
+            {paymentOptions.map((p) => (
+              <option key={p} value={p}>
+                {p === 'all' ? 'All Payments' : p.charAt(0).toUpperCase() + p.slice(1)}
               </option>
             ))}
           </select>
@@ -122,6 +140,20 @@ export default async function AdminEnquiriesPage({
                   <div className="flex flex-wrap items-center gap-2 mb-3">
                     <StatusBadge value={enquiry.status} variant="status" />
                     <StatusBadge value={enquiry.category} variant="category" />
+                    {enquiry.paymentStatus && (
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
+                          paymentStatusStyles[enquiry.paymentStatus] ?? 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
+                        {enquiry.paymentStatus === 'paid'
+                          ? '✓ Paid'
+                          : enquiry.paymentStatus === 'failed'
+                          ? 'Payment failed'
+                          : `Payment ${enquiry.paymentStatus}`}
+                        {enquiry.paymentAmount ? ` · ৳${enquiry.paymentAmount.toLocaleString('en-IN')}` : ''}
+                      </span>
+                    )}
                     {enquiry.packageTitle && (
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
                         {enquiry.packageTitle}

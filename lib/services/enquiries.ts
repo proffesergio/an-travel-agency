@@ -6,6 +6,7 @@ import type { EnquiryInput } from '@/lib/validation/enquiry';
 export interface EnquiryFilters {
   status?: string;
   category?: string;
+  payment?: string;
 }
 
 export async function listEnquiries(filters: EnquiryFilters = {}) {
@@ -13,6 +14,7 @@ export async function listEnquiries(filters: EnquiryFilters = {}) {
   const query: Record<string, unknown> = {};
   if (filters.status && filters.status !== 'all') query.status = filters.status;
   if (filters.category && filters.category !== 'all') query.category = filters.category;
+  if (filters.payment && filters.payment !== 'all') query.paymentStatus = filters.payment;
   return Enquiry.find(query).sort({ createdAt: -1 }).lean();
 }
 
@@ -21,7 +23,23 @@ export async function getEnquiryById(id: string) {
   return Enquiry.findById(id).lean();
 }
 
-export async function createEnquiry(input: EnquiryInput): Promise<IEnquiry> {
+/** Optional structured booking data captured during the Hajj/Umrah flow. */
+export interface EnquiryBookingExtras {
+  nameBn?: string;
+  nidNumber?: string;
+  passportNumber?: string;
+  dateOfBirth?: string;
+  address?: string;
+  documents?: {
+    passportImage?: string;
+    nidImage?: string;
+    photoImage?: string;
+  };
+}
+
+export async function createEnquiry(
+  input: EnquiryInput & EnquiryBookingExtras
+): Promise<IEnquiry> {
   await connectDB();
   return Enquiry.create({ ...input, status: 'new' });
 }
