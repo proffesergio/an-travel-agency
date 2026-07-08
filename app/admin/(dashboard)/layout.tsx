@@ -9,12 +9,14 @@ import {
   Settings,
   LogOut,
   LayoutDashboard,
+  Hotel,
 } from 'lucide-react';
 import { Toaster } from '@/components/admin/Toaster';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/packages', label: 'Packages', icon: Package },
+  { href: '/admin/hotels', label: 'Hotels', icon: Hotel },
   { href: '/admin/enquiries', label: 'Enquiries', icon: MessageSquare },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
