@@ -2,7 +2,7 @@ import { connectDB } from '@/lib/mongodb';
 import Activity from '@/models/Activity';
 
 export type ActivityAction = 'create' | 'update' | 'delete' | 'login' | 'logout' | 'view' | 'export';
-export type ActivityEntity = 'package' | 'enquiry' | 'settings' | 'user';
+export type ActivityEntity = 'package' | 'hotel' | 'enquiry' | 'settings' | 'user';
 
 export interface LogActivityInput {
   action: ActivityAction;

@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IActivity extends Document {
   action: string;
-  entityType: 'package' | 'enquiry' | 'settings' | 'user';
+  entityType: 'package' | 'hotel' | 'enquiry' | 'settings' | 'user';
   entityId?: string;
   entityName?: string;
   adminEmail: string;
@@ -21,7 +21,7 @@ const ActivitySchema = new Schema<IActivity>(
     entityType: {
       type: String,
       required: true,
-      enum: ['package', 'enquiry', 'settings', 'user'],
+      enum: ['package', 'hotel', 'enquiry', 'settings', 'user'],
     },
     entityId: { type: String },
     entityName: { type: String },
