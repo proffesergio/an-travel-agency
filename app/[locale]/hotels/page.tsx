@@ -23,14 +23,19 @@ export default async function HotelsPage({
   const sp = await searchParams;
   const isBn = locale === 'bn';
 
-  const hotels = await searchHotels({
-    city: sp.city,
-    stars: sp.stars ? sp.stars.split(',').map(Number).filter(Boolean) : undefined,
-    maxPrice: sp.maxPrice ? Number(sp.maxPrice) : undefined,
-    haramMaxMeters: sp.haram ? Number(sp.haram) : undefined,
-    amenities: sp.amenities ? sp.amenities.split(',').filter(Boolean) : undefined,
-    sort: (sp.sort as HotelSort) ?? 'recommended',
-  });
+  let hotels: Awaited<ReturnType<typeof searchHotels>> = [];
+  try {
+    hotels = await searchHotels({
+      city: sp.city,
+      stars: sp.stars ? sp.stars.split(',').map(Number).filter(Boolean) : undefined,
+      maxPrice: sp.maxPrice ? Number(sp.maxPrice) : undefined,
+      haramMaxMeters: sp.haram ? Number(sp.haram) : undefined,
+      amenities: sp.amenities ? sp.amenities.split(',').filter(Boolean) : undefined,
+      sort: (sp.sort as HotelSort) ?? 'recommended',
+    });
+  } catch (error) {
+    console.error('[hotels] search failed', error);
+  }
 
   const query = new URLSearchParams(
     Object.entries(sp).filter(([, v]) => typeof v === 'string') as [string, string][]
