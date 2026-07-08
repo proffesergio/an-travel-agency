@@ -51,3 +51,5 @@ passenger_wsgi.py
 *.tsbuildinfo
 next-env.d.ts
 .superpowers/
+
+graphify-out/
