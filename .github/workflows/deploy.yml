@@ -14,8 +14,8 @@ jobs:
 
     steps:
       # Step 1: Checkout your code from the repository
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: 🚚 Get latest code from github repository
+        uses: actions/checkout@v6
 
       # Step 2: Setup Node.js environment
       # Use a Node.js version >= 18.17 and compatible with your project
@@ -51,8 +51,8 @@ jobs:
       # which is correct for a normal Next app but wrong for a standalone
       # bundle — Next.js trace-collects the runtime deps into
       # build/standalone/node_modules/. We override `exclude` to keep them.
-      - name: Deploy to cPanel via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
