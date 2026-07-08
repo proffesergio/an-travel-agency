@@ -14,8 +14,16 @@ export interface IEnquiry extends Document {
   phone: string;
   packageId?: string;
   packageTitle?: string;
-  category: 'hajj' | 'umrah' | 'tour' | 'air-ticketing' | 'general';
+  category: 'hajj' | 'umrah' | 'tour' | 'air-ticketing' | 'hotel' | 'general';
   passengers?: number;
+  /** Hotel booking fields (category === 'hotel'). */
+  hotelId?: string;
+  hotelName?: string;
+  roomType?: string;
+  checkIn?: string;
+  checkOut?: string;
+  roomsCount?: number;
+  guests?: { adults: number; children: number };
   message: string;
   /** Structured applicant identity captured during booking. */
   nidNumber?: string;
@@ -47,10 +55,20 @@ const EnquirySchema = new Schema<IEnquiry>(
     packageTitle: { type: String },
     category: {
       type: String,
-      enum: ['hajj', 'umrah', 'tour', 'air-ticketing', 'general'],
+      enum: ['hajj', 'umrah', 'tour', 'air-ticketing', 'hotel', 'general'],
       default: 'general',
     },
     passengers: { type: Number, default: 1 },
+    hotelId: { type: String },
+    hotelName: { type: String },
+    roomType: { type: String },
+    checkIn: { type: String },
+    checkOut: { type: String },
+    roomsCount: { type: Number },
+    guests: {
+      adults: { type: Number },
+      children: { type: Number },
+    },
     message: { type: String, default: '' },
     nidNumber: { type: String },
     passportNumber: { type: String },

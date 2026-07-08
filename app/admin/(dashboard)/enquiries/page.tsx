@@ -36,7 +36,7 @@ export default async function AdminEnquiriesPage({
   }
 
   const statusOptions = ['all', 'new', 'contacted', 'closed'];
-  const categoryOptions = ['all', 'hajj', 'umrah', 'tour', 'air-ticketing', 'general'];
+  const categoryOptions = ['all', 'hajj', 'umrah', 'tour', 'air-ticketing', 'hotel', 'general'];
   const paymentOptions = ['all', 'paid', 'pending', 'failed'];
 
   return (

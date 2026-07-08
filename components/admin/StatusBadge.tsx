@@ -9,6 +9,7 @@ const CATEGORY_STYLES: Record<string, string> = {
   umrah: 'bg-green-100 text-green-800',
   tour: 'bg-blue-100 text-blue-800',
   'air-ticketing': 'bg-cyan-100 text-cyan-800',
+  hotel: 'bg-indigo-100 text-indigo-800',
   general: 'bg-gray-100 text-gray-800',
 };
 
