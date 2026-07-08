@@ -217,6 +217,44 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
             </dl>
           </section>
 
+          {enquiry.category === 'hotel' && (
+            <section className="bg-white rounded-xl border border-gray-200 p-6">
+              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
+                Hotel Booking Details
+              </h2>
+              <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+                <div>
+                  <dt className="text-xs text-gray-500">Hotel</dt>
+                  <dd className="mt-1 font-medium text-gray-900">{enquiry.hotelName ?? '—'}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-500">Room Type</dt>
+                  <dd className="mt-1 font-medium text-gray-900">{enquiry.roomType ?? '—'}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-500">Check-in</dt>
+                  <dd className="mt-1 font-medium text-gray-900">{enquiry.checkIn ?? '—'}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-500">Check-out</dt>
+                  <dd className="mt-1 font-medium text-gray-900">{enquiry.checkOut ?? '—'}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-500">Rooms</dt>
+                  <dd className="mt-1 font-medium text-gray-900">{enquiry.roomsCount ?? 1}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-500">Guests</dt>
+                  <dd className="mt-1 font-medium text-gray-900">
+                    {enquiry.guests
+                      ? `${enquiry.guests.adults} adults${enquiry.guests.children ? ` + ${enquiry.guests.children} children` : ''}`
+                      : '—'}
+                  </dd>
+                </div>
+              </dl>
+            </section>
+          )}
+
           {enquiry.documents &&
             Object.values(enquiry.documents).some(Boolean) && (
               <section className="bg-white rounded-xl border border-gray-200 p-6">
