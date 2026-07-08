@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ChevronDown, Globe, Menu, Phone, Sparkles, X } from 'lucide-react';
 import AuthButton from '@/components/auth/AuthButton';
+import { Analytics } from "@vercel/analytics/next";
 
 const LOCALES = [
   { code: 'en', label: 'EN', fullLabel: 'English' },
