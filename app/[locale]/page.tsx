@@ -10,6 +10,9 @@ import WhyChooseUs from '@/components/home/WhyChooseUs';
 import StatsSection from '@/components/home/StatsSection';
 import CtaBanner from '@/components/home/CtaBanner';
 
+// Render live so packages/hotels created in the admin panel appear immediately.
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage({
   params,
 }: {

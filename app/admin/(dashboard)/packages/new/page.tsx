@@ -96,8 +96,16 @@ export default function NewPackagePage() {
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to create package');
+        const data = await res.json().catch(() => null);
+        const issues = (data as { issues?: { fieldErrors?: Record<string, string[]> } })?.issues;
+        const fieldMsg = issues?.fieldErrors
+          ? Object.entries(issues.fieldErrors)
+              .filter(([, v]) => v?.length)
+              .map(([k, v]) => `${k}: ${v[0]}`)
+              .slice(0, 3)
+              .join(' · ')
+          : null;
+        throw new Error(fieldMsg || data?.error || 'Failed to create package');
       }
 
       router.push('/admin/packages');
@@ -183,12 +191,11 @@ export default function NewPackagePage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Title (Bengali) *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Title (Bengali)</label>
               <input
                 type="text"
                 value={form.titleBn}
                 onChange={(e) => setForm({ ...form, titleBn: e.target.value })}
-                required
                 className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:border-[#2d6a4f] focus:ring-2 focus:ring-[#2d6a4f]/20 outline-none"
                 placeholder="প্রিমিয়াম হজ্জ প্যাকেজ ২০২৫"
               />
@@ -252,12 +259,11 @@ export default function NewPackagePage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Duration (Bengali) *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Duration (Bengali)</label>
               <input
                 type="text"
                 value={form.durationBn}
                 onChange={(e) => setForm({ ...form, durationBn: e.target.value })}
-                required
                 className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:border-[#2d6a4f] focus:ring-2 focus:ring-[#2d6a4f]/20 outline-none"
                 placeholder="১৫ দিন / ১৪ রাত"
               />

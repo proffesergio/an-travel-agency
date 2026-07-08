@@ -35,7 +35,7 @@ export interface IHotel extends Document {
 const RoomTypeSchema = new Schema<IRoomType>(
   {
     name: { type: String, required: true },
-    nameBn: { type: String, required: true },
+    nameBn: { type: String, default: '' },
     pricePerNight: { type: Number, required: true },
     capacity: {
       adults: { type: Number, required: true, default: 2 },
@@ -51,16 +51,16 @@ const RoomTypeSchema = new Schema<IRoomType>(
 const HotelSchema = new Schema<IHotel>(
   {
     name: { type: String, required: true },
-    nameBn: { type: String, required: true },
+    nameBn: { type: String, default: '' },
     slug: { type: String, required: true, unique: true },
     city: { type: String, required: true, index: true },
-    cityBn: { type: String, required: true },
+    cityBn: { type: String, default: '' },
     country: { type: String, required: true },
-    countryBn: { type: String, required: true },
-    starRating: { type: Number, required: true, min: 1, max: 5 },
+    countryBn: { type: String, default: '' },
+    starRating: { type: Number, required: true, min: 1, max: 5, default: 3 },
     distanceFromHaramMeters: { type: Number },
-    description: { type: String, required: true },
-    descriptionBn: { type: String, required: true },
+    description: { type: String, default: '' },
+    descriptionBn: { type: String, default: '' },
     amenities: [{ type: String }],
     images: [{ type: String }],
     currency: { type: String, default: 'BDT' },

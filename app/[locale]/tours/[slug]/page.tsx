@@ -5,12 +5,10 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import BookingEnquiryForm from '@/components/packages/BookingEnquiryForm';
 import BookNowTrigger from '@/components/packages/BookNowTrigger';
-import { getPackageBySlug, getPackagesByCategory } from '@/lib/seed-data';
+import { getDisplayPackageBySlug } from '@/lib/data/packages';
 import { CheckCircle2, Clock, Tag, Users } from 'lucide-react';
 
-export async function generateStaticParams() {
-  return getPackagesByCategory('tour').map((p) => ({ slug: p.slug }));
-}
+export const dynamic = 'force-dynamic';
 
 export default async function TourDetailPage({
   params,
@@ -19,11 +17,11 @@ export default async function TourDetailPage({
 }) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
-  const pkg = getPackageBySlug(slug);
+  const pkg = await getDisplayPackageBySlug(slug);
   if (!pkg || pkg.category !== 'tour') notFound();
 
   const isBn = locale === 'bn';
-  const title = isBn ? pkg.titleBn : pkg.title;
+  const title = isBn ? pkg.titleBn || pkg.title : pkg.title;
 
   return (
     <>
@@ -46,21 +44,28 @@ export default async function TourDetailPage({
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-10">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">Tour Overview</h2>
-              <p className="text-gray-600 leading-relaxed">{isBn ? pkg.descriptionBn : pkg.description}</p>
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">What's Included</h2>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {pkg.inclusions.map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-gray-700">
-                    <CheckCircle2 className="w-5 h-5 text-[#2d6a4f] mt-0.5 flex-shrink-0" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {(isBn ? pkg.descriptionBn || pkg.description : pkg.description) && (
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-3">Tour Overview</h2>
+                <p className="text-gray-600 leading-relaxed">
+                  {isBn ? pkg.descriptionBn || pkg.description : pkg.description}
+                </p>
+              </div>
+            )}
+            {pkg.inclusions.length > 0 && (
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">What's Included</h2>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {pkg.inclusions.map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-gray-700">
+                      <CheckCircle2 className="w-5 h-5 text-[#2d6a4f] mt-0.5 flex-shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {pkg.itinerary.length > 0 && (
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Day-by-Day Itinerary</h2>
               <div className="space-y-4">
@@ -77,6 +82,7 @@ export default async function TourDetailPage({
                 ))}
               </div>
             </div>
+            )}
           </div>
 
           <div>

@@ -2,14 +2,16 @@ import { setRequestLocale } from 'next-intl/server';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import PackageCard from '@/components/packages/PackageCard';
-import { getPackagesByCategory } from '@/lib/seed-data';
+import { getDisplayPackagesByCategory } from '@/lib/data/packages';
 import { Compass } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
 
 export default async function UmrahPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const isBn = locale === 'bn';
-  const packages = getPackagesByCategory('umrah');
+  const packages = await getDisplayPackagesByCategory('umrah');
 
   return (
     <>

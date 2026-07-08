@@ -85,16 +85,30 @@ function generateSlug(name: string) {
     .trim();
 }
 
-async function uploadFile(file: File): Promise<string | null> {
+async function uploadFile(file: File): Promise<{ url?: string; error?: string }> {
   const formData = new FormData();
   formData.append('file', file);
   try {
     const res = await fetch('/api/upload', { method: 'POST', body: formData });
     const data = await res.json();
-    return data.url ?? null;
+    if (!res.ok || !data.url) {
+      return { error: data.error || `Upload failed (${res.status})` };
+    }
+    return { url: data.url };
   } catch {
-    return null;
+    return { error: 'Upload failed — network error' };
   }
+}
+
+/** Turn a zod flatten() payload from the API into a readable message. */
+function validationMessage(data: unknown): string | null {
+  const issues = (data as { issues?: { fieldErrors?: Record<string, string[]> } })?.issues;
+  if (!issues?.fieldErrors) return null;
+  const parts = Object.entries(issues.fieldErrors)
+    .filter(([, msgs]) => msgs?.length)
+    .map(([field, msgs]) => `${field}: ${msgs[0]}`)
+    .slice(0, 3);
+  return parts.length ? parts.join(' · ') : null;
 }
 
 export default function HotelForm({
@@ -133,12 +147,15 @@ export default function HotelForm({
     const files = Array.from(e.target.files ?? []);
     if (!files.length) return;
     setUploading(true);
+    setError('');
     const urls: string[] = [];
+    let uploadError = '';
     for (const file of files) {
-      const url = await uploadFile(file);
-      if (url) urls.push(url);
+      const result = await uploadFile(file);
+      if (result.url) urls.push(result.url);
+      else if (result.error) uploadError = result.error;
     }
-    if (urls.length < files.length) setError('Some images failed to upload');
+    if (uploadError) setError(uploadError);
     if (typeof roomIndex === 'number') {
       setForm((f) => {
         const rooms = [...f.rooms];
@@ -180,26 +197,41 @@ export default function HotelForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
 
+    const rooms = form.rooms
+      .filter((r) => r.name.trim())
+      .map((r) => ({
+        name: r.name.trim(),
+        nameBn: r.nameBn,
+        pricePerNight: parseFloat(r.pricePerNight),
+        capacity: {
+          adults: parseInt(r.adults, 10) || 2,
+          children: parseInt(r.children, 10) || 0,
+        },
+        bedInfo: r.bedInfo || undefined,
+        images: r.images,
+        available: r.available,
+      }));
+
+    if (rooms.length === 0) {
+      setError('Add at least one room type with a name.');
+      return;
+    }
+    const badRoom = rooms.find((r) => !Number.isFinite(r.pricePerNight) || r.pricePerNight <= 0);
+    if (badRoom) {
+      setError(`Room "${badRoom.name}" needs a valid price per night.`);
+      return;
+    }
+
+    setLoading(true);
     const payload = {
       ...form,
       starRating: Number(form.starRating),
       distanceFromHaramMeters: form.distanceFromHaramMeters
         ? parseInt(form.distanceFromHaramMeters, 10)
         : undefined,
-      rooms: form.rooms
-        .filter((r) => r.name.trim())
-        .map((r) => ({
-          name: r.name,
-          nameBn: r.nameBn,
-          pricePerNight: parseFloat(r.pricePerNight),
-          capacity: { adults: parseInt(r.adults, 10), children: parseInt(r.children, 10) || 0 },
-          bedInfo: r.bedInfo || undefined,
-          images: r.images,
-          available: r.available,
-        })),
+      rooms,
     };
 
     try {
@@ -209,8 +241,8 @@ export default function HotelForm({
         body: JSON.stringify(payload),
       });
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to save hotel');
+        const data = await res.json().catch(() => null);
+        throw new Error(validationMessage(data) || data?.error || 'Failed to save hotel');
       }
       router.push('/admin/hotels');
       router.refresh();
@@ -284,15 +316,14 @@ export default function HotelForm({
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Hotel Name (Bengali) *
+                Hotel Name (Bengali)
               </label>
               <input
                 type="text"
                 value={form.nameBn}
                 onChange={(e) => set({ nameBn: e.target.value })}
-                required
                 className={inputCls}
-                placeholder="হোটেলের নাম বাংলায়"
+                placeholder="হোটেলের নাম বাংলায় (ঐচ্ছিক)"
               />
             </div>
             <div>
@@ -335,15 +366,14 @@ export default function HotelForm({
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                City (Bengali) *
+                City (Bengali)
               </label>
               <input
                 type="text"
                 value={form.cityBn}
                 onChange={(e) => set({ cityBn: e.target.value })}
-                required
                 className={inputCls}
-                placeholder="মক্কা"
+                placeholder="মক্কা (ঐচ্ছিক)"
               />
             </div>
             <div>
@@ -361,15 +391,14 @@ export default function HotelForm({
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Country (Bengali) *
+                Country (Bengali)
               </label>
               <input
                 type="text"
                 value={form.countryBn}
                 onChange={(e) => set({ countryBn: e.target.value })}
-                required
                 className={inputCls}
-                placeholder="সৌদি আরব"
+                placeholder="সৌদি আরব (ঐচ্ছিক)"
               />
             </div>
             <div>
@@ -409,28 +438,26 @@ export default function HotelForm({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Description (English) *
+                Description (English)
               </label>
               <textarea
                 value={form.description}
                 onChange={(e) => set({ description: e.target.value })}
-                required
                 rows={4}
                 className={`${inputCls} resize-none`}
-                placeholder="Hotel description in English..."
+                placeholder="Hotel description in English (optional)..."
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Description (Bengali) *
+                Description (Bengali)
               </label>
               <textarea
                 value={form.descriptionBn}
                 onChange={(e) => set({ descriptionBn: e.target.value })}
-                required
                 rows={4}
                 className={`${inputCls} resize-none`}
-                placeholder="বাংলায় হোটেলের বর্ণনা..."
+                placeholder="বাংলায় হোটেলের বর্ণনা (ঐচ্ছিক)..."
               />
             </div>
           </div>

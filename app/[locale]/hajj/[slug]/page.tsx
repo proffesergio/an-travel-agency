@@ -5,13 +5,10 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import BookingEnquiryForm from '@/components/packages/BookingEnquiryForm';
 import BookNowTrigger from '@/components/packages/BookNowTrigger';
-import { getPackageBySlug, getPackagesByCategory } from '@/lib/seed-data';
+import { getDisplayPackageBySlug } from '@/lib/data/packages';
 import { CheckCircle2, Clock, Tag, Users } from 'lucide-react';
 
-export async function generateStaticParams() {
-  const packages = getPackagesByCategory('hajj');
-  return packages.map((p) => ({ slug: p.slug }));
-}
+export const dynamic = 'force-dynamic';
 
 export default async function HajjDetailPage({
   params,
@@ -20,13 +17,13 @@ export default async function HajjDetailPage({
 }) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
-  const pkg = getPackageBySlug(slug);
+  const pkg = await getDisplayPackageBySlug(slug);
   if (!pkg || pkg.category !== 'hajj') notFound();
 
   const isBn = locale === 'bn';
-  const title = isBn ? pkg.titleBn : pkg.title;
-  const description = isBn ? pkg.descriptionBn : pkg.description;
-  const duration = isBn ? pkg.durationBn : pkg.duration;
+  const title = isBn ? pkg.titleBn || pkg.title : pkg.title;
+  const description = isBn ? pkg.descriptionBn || pkg.description : pkg.description;
+  const duration = isBn ? pkg.durationBn || pkg.duration : pkg.duration;
 
   return (
     <>
@@ -57,25 +54,30 @@ export default async function HajjDetailPage({
           {/* Left: Details */}
           <div className="lg:col-span-2 space-y-10">
             {/* Overview */}
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">Package Overview</h2>
-              <p className="text-gray-600 leading-relaxed">{description}</p>
-            </div>
+            {description && (
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-3">Package Overview</h2>
+                <p className="text-gray-600 leading-relaxed">{description}</p>
+              </div>
+            )}
 
             {/* Inclusions */}
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">What's Included</h2>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {pkg.inclusions.map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-gray-700">
-                    <CheckCircle2 className="w-5 h-5 text-[#2d6a4f] mt-0.5 flex-shrink-0" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {pkg.inclusions.length > 0 && (
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">What's Included</h2>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {pkg.inclusions.map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-gray-700">
+                      <CheckCircle2 className="w-5 h-5 text-[#2d6a4f] mt-0.5 flex-shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Itinerary */}
+            {pkg.itinerary.length > 0 && (
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Day-by-Day Itinerary</h2>
               <div className="space-y-4">
@@ -94,6 +96,7 @@ export default async function HajjDetailPage({
                 ))}
               </div>
             </div>
+            )}
           </div>
 
           {/* Right: Booking form */}

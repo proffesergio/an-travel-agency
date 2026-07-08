@@ -32,6 +32,10 @@ export default async function HotelDetailPage({
   if (!hotel || !hotel.available) notFound();
 
   const rooms = (hotel.rooms ?? []).filter((r) => r.available);
+  const name = isBn ? hotel.nameBn || hotel.name : hotel.name;
+  const city = isBn ? hotel.cityBn || hotel.city : hotel.city;
+  const country = isBn ? hotel.countryBn || hotel.country : hotel.country;
+  const description = isBn ? hotel.descriptionBn || hotel.description : hotel.description;
 
   return (
     <>
@@ -44,7 +48,7 @@ export default async function HotelDetailPage({
               {hotel.images?.[0] && (
                 <Image
                   src={hotel.images[0]}
-                  alt={isBn ? hotel.nameBn : hotel.name}
+                  alt={name}
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 66vw"
@@ -70,9 +74,7 @@ export default async function HotelDetailPage({
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                  {isBn ? hotel.nameBn : hotel.name}
-                </h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{name}</h1>
                 <p className="flex items-center gap-2 text-gray-500 mt-2">
                   <span className="inline-flex items-center gap-0.5">
                     {Array.from({ length: hotel.starRating }).map((_, i) => (
@@ -80,7 +82,7 @@ export default async function HotelDetailPage({
                     ))}
                   </span>
                   <MapPin className="w-4 h-4" />
-                  {isBn ? hotel.cityBn : hotel.city}, {isBn ? hotel.countryBn : hotel.country}
+                  {city}, {country}
                 </p>
                 {typeof hotel.distanceFromHaramMeters === 'number' && (
                   <span className="inline-block mt-2 text-sm font-medium bg-green-50 text-[#2d6a4f] px-3 py-1 rounded-full">
@@ -98,9 +100,9 @@ export default async function HotelDetailPage({
                 </span>
               ))}
             </div>
-            <p className="text-gray-600 mt-4 whitespace-pre-line">
-              {isBn ? hotel.descriptionBn : hotel.description}
-            </p>
+            {description && (
+              <p className="text-gray-600 mt-4 whitespace-pre-line">{description}</p>
+            )}
           </div>
 
           {/* Rooms */}
@@ -129,7 +131,9 @@ export default async function HotelDetailPage({
                   )}
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900">{isBn ? room.nameBn : room.name}</h3>
+                  <h3 className="font-semibold text-gray-900">
+                    {isBn ? room.nameBn || room.name : room.name}
+                  </h3>
                   <p className="flex items-center gap-3 text-sm text-gray-500 mt-1">
                     {room.bedInfo && (
                       <span className="inline-flex items-center gap-1">

@@ -1,11 +1,13 @@
-import { getPackagesByCategory } from '@/lib/seed-data';
+import { getDisplayPackagesByCategory } from '@/lib/data/packages';
 import PackageCarousel from './PackageCarousel';
 
-export default function HomePackageSections({ locale }: { locale: string }) {
+export default async function HomePackageSections({ locale }: { locale: string }) {
   const isBn = locale === 'bn';
-  const hajj = getPackagesByCategory('hajj');
-  const umrah = getPackagesByCategory('umrah');
-  const tours = getPackagesByCategory('tour');
+  const [hajj, umrah, tours] = await Promise.all([
+    getDisplayPackagesByCategory('hajj'),
+    getDisplayPackagesByCategory('umrah'),
+    getDisplayPackagesByCategory('tour'),
+  ]);
 
   return (
     <>

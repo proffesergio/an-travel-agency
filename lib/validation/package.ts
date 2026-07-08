@@ -8,7 +8,7 @@ const itineraryDaySchema = z.object({
 
 export const packageInputSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200),
-  titleBn: z.string().min(1, 'Bengali title is required').max(200),
+  titleBn: z.string().max(200).default(''),
   slug: z
     .string()
     .min(1, 'Slug is required')
@@ -18,12 +18,12 @@ export const packageInputSchema = z.object({
   price: z.number({ message: 'Price is required' }).positive('Price must be greater than 0'),
   currency: z.string().min(1).default('BDT'),
   duration: z.string().min(1, 'Duration is required'),
-  durationBn: z.string().min(1, 'Bengali duration is required'),
-  description: z.string().min(1, 'Description is required'),
-  descriptionBn: z.string().min(1, 'Bengali description is required'),
-  inclusions: z.array(z.string().trim().min(1)).min(1, 'Add at least one inclusion'),
+  durationBn: z.string().default(''),
+  description: z.string().default(''),
+  descriptionBn: z.string().default(''),
+  inclusions: z.array(z.string().trim().min(1)).default([]),
   inclusionsBn: z.array(z.string().trim().min(1)).default([]),
-  itinerary: z.array(itineraryDaySchema).min(1, 'Add at least one itinerary day'),
+  itinerary: z.array(itineraryDaySchema).default([]),
   imageUrl: z.string().default('/images/placeholder-package.jpg'),
   featured: z.boolean().default(false),
   available: z.boolean().default(true),

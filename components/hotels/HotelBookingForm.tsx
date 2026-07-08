@@ -154,7 +154,7 @@ export default function HotelBookingForm({
           >
             {rooms.map((r) => (
               <option key={r.name} value={r.name}>
-                {isBn ? r.nameBn : r.name}
+                {isBn ? r.nameBn || r.name : r.name}
               </option>
             ))}
           </select>

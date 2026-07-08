@@ -24,15 +24,15 @@ export interface IPackage extends Document {
 const PackageSchema = new Schema<IPackage>(
   {
     title: { type: String, required: true },
-    titleBn: { type: String, required: true },
+    titleBn: { type: String, default: '' },
     slug: { type: String, required: true, unique: true },
     category: { type: String, enum: ['hajj', 'umrah', 'tour'], required: true },
     price: { type: Number, required: true },
     currency: { type: String, default: 'BDT' },
     duration: { type: String, required: true },
-    durationBn: { type: String, required: true },
-    description: { type: String, required: true },
-    descriptionBn: { type: String, required: true },
+    durationBn: { type: String, default: '' },
+    description: { type: String, default: '' },
+    descriptionBn: { type: String, default: '' },
     inclusions: [{ type: String }],
     inclusionsBn: [{ type: String }],
     itinerary: [

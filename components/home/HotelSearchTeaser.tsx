@@ -63,7 +63,7 @@ export default function HotelSearchTeaser({ locale }: { locale: string }) {
                   {h.imageUrl && (
                     <Image
                       src={h.imageUrl}
-                      alt={isBn ? h.nameBn : h.name}
+                      alt={isBn ? h.nameBn || h.name : h.name}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                       sizes="(max-width: 1024px) 50vw, 25vw"
@@ -72,14 +72,14 @@ export default function HotelSearchTeaser({ locale }: { locale: string }) {
                 </div>
                 <div className="p-3">
                   <p className="font-semibold text-sm text-gray-900 truncate group-hover:text-[#2d6a4f]">
-                    {isBn ? h.nameBn : h.name}
+                    {isBn ? h.nameBn || h.name : h.name}
                   </p>
                   <p className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
                     <span className="inline-flex items-center gap-0.5 text-amber-500">
                       {h.starRating}
                       <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                     </span>
-                    · {isBn ? h.cityBn : h.city}
+                    · {isBn ? h.cityBn || h.city : h.city}
                   </p>
                   <p className="text-sm font-bold text-[#1b4332] mt-1">
                     {formatMoney(h.fromPrice, h.currency)}
