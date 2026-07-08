@@ -3,6 +3,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import HeroSection from '@/components/home/HeroSection';
 import HomePackageSections from '@/components/home/HomePackageSections';
+import HotelSearchTeaser from '@/components/home/HotelSearchTeaser';
 import Hajj2027Banner from '@/components/home/Hajj2027Banner';
 import ServicesSection from '@/components/home/ServicesSection';
 import WhyChooseUs from '@/components/home/WhyChooseUs';
@@ -23,6 +24,7 @@ export default async function HomePage({
       <main className="flex-1">
         <HeroSection locale={locale} />
         <HomePackageSections locale={locale} />
+        <HotelSearchTeaser locale={locale} />
         <Hajj2027Banner locale={locale} />
         <ServicesSection locale={locale} />
         <WhyChooseUs />
