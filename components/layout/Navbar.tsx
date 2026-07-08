@@ -34,6 +34,7 @@ export default function Navbar() {
     { href: '/hajj', label: t('hajj') },
     { href: '/umrah', label: t('umrah') },
     { href: '/tours', label: t('tours') },
+    { href: '/hotels', label: t('hotels') },
     { href: '/air-ticketing', label: t('airTicketing') },
   ];
 
