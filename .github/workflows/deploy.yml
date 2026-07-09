@@ -1,15 +1,27 @@
-# Name of your workflow (visible on GitHub)
-name: Deploy Next.js App to cPanel
+# CI build check + cPanel deploy fallback.
+#
+# Production deploys are handled by Vercel (connected to this repo), so on
+# every push this workflow only verifies the app builds. The original cPanel
+# FTP deploy is kept as a BACKUP: it never runs automatically, only when you
+# trigger the workflow manually from the Actions tab with the
+# "Deploy to cPanel via FTP" option checked.
+name: CI Build (cPanel deploy fallback)
 
-# Trigger the workflow on pushes to the 'main' branch
 on:
   push:
     branches: [ main ]
-  # Allows you to manually run the workflow from GitHub's Actions tab
+  # Manual runs from GitHub's Actions tab. Tick the checkbox to also run the
+  # legacy cPanel FTP deploy (requires FTP_* secrets to still be valid).
   workflow_dispatch:
+    inputs:
+      deploy_to_cpanel:
+        description: 'Deploy to cPanel via FTP (fallback — Vercel handles normal deploys)'
+        type: boolean
+        required: false
+        default: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -37,10 +49,16 @@ jobs:
       - name: Build Next.js app
         run: npm run build
 
+      # ----------------------------------------------------------------------
+      # cPanel FTP deploy — FALLBACK ONLY. Skipped on pushes; runs only on a
+      # manual workflow_dispatch with deploy_to_cpanel checked.
+      # ----------------------------------------------------------------------
+
       # Step 5: Copy static assets into the standalone bundle.
       # The standalone server expects: public/ next to its server.js, and
       # static/ inside <distDir>/ — here that is build/standalone/build/static.
       - name: Copy static assets to standalone directory
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy_to_cpanel == true
         run: |
           cp -r public build/standalone/public
           cp -r build/static build/standalone/build/static
@@ -52,6 +70,7 @@ jobs:
       # bundle — Next.js trace-collects the runtime deps into
       # build/standalone/node_modules/. We override `exclude` to keep them.
       - name: 📂 Sync files
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy_to_cpanel == true
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{ secrets.FTP_HOST }}
