@@ -20,6 +20,8 @@ export interface IHotel extends Document {
   countryBn: string;
   starRating: number;
   distanceFromHaramMeters?: number;
+  bookingPhone: string;
+  mapEmbedUrl: string;
   description: string;
   descriptionBn: string;
   amenities: string[];
@@ -59,6 +61,8 @@ const HotelSchema = new Schema<IHotel>(
     countryBn: { type: String, default: '' },
     starRating: { type: Number, required: true, min: 1, max: 5, default: 3 },
     distanceFromHaramMeters: { type: Number },
+    bookingPhone: { type: String, default: '' },
+    mapEmbedUrl: { type: String, default: '' },
     description: { type: String, default: '' },
     descriptionBn: { type: String, default: '' },
     amenities: [{ type: String }],

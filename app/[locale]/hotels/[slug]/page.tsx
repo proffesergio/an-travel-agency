@@ -1,10 +1,11 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
-import { Star, MapPin, Users, BedDouble } from 'lucide-react';
+import { Star, MapPin, Users, BedDouble, Phone, MessageCircle } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import HotelBookingForm from '@/components/hotels/HotelBookingForm';
+import HotelGallery from '@/components/hotels/HotelGallery';
 import BookRoomButton from './BookRoomButton';
 import { getHotelBySlug } from '@/lib/services/hotels';
 import {
@@ -37,38 +38,20 @@ export default async function HotelDetailPage({
   const country = isBn ? hotel.countryBn || hotel.country : hotel.country;
   const description = isBn ? hotel.descriptionBn || hotel.description : hotel.description;
 
+  const bookingPhone = hotel.bookingPhone?.trim() ?? '';
+  // wa.me links take the number as digits only (with country code, no + or dashes).
+  const whatsAppNumber = bookingPhone.replace(/\D/g, '');
+  const whatsAppText = encodeURIComponent(
+    `Hello, I would like to book a room at ${hotel.name}.`
+  );
+
   return (
     <>
       <Navbar />
       <main className="flex-1 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 py-8">
           {/* Gallery */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 rounded-2xl overflow-hidden mb-6">
-            <div className="relative md:col-span-2 h-64 md:h-96 bg-gray-100">
-              {hotel.images?.[0] && (
-                <Image
-                  src={hotel.images[0]}
-                  alt={name}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 66vw"
-                  priority
-                />
-              )}
-            </div>
-            <div className="hidden md:grid grid-rows-2 gap-2">
-              {[hotel.images?.[1], hotel.images?.[2]].map((url, i) => (
-                <div key={i} className="relative bg-gray-100">
-                  {url && <Image src={url} alt="" fill className="object-cover" sizes="33vw" />}
-                  {i === 1 && (hotel.images?.length ?? 0) > 3 && (
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white font-semibold">
-                      +{hotel.images.length - 3} {isBn ? 'ছবি' : 'photos'}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          <HotelGallery images={hotel.images ?? []} name={name} isBn={isBn} />
 
           {/* Header */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
@@ -90,6 +73,28 @@ export default async function HotelDetailPage({
                   </span>
                 )}
               </div>
+              {bookingPhone && (
+                <div className="flex flex-col gap-2">
+                  <a
+                    href={`tel:${bookingPhone.replace(/[^\d+]/g, '')}`}
+                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#2d6a4f] text-white rounded-lg hover:bg-[#1b4332] transition-colors font-semibold text-sm"
+                  >
+                    <Phone className="w-4 h-4" />
+                    {isBn ? 'বুক করতে কল করুন' : 'Call to Book'} — {bookingPhone}
+                  </a>
+                  {whatsAppNumber && (
+                    <a
+                      href={`https://wa.me/${whatsAppNumber}?text=${whatsAppText}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-[#2d6a4f] text-[#2d6a4f] rounded-lg hover:bg-green-50 transition-colors font-semibold text-sm"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      {isBn ? 'হোয়াটসঅ্যাপে বুক করুন' : 'Book via WhatsApp'}
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
             <div className="flex flex-wrap gap-2 mt-4">
               {(hotel.amenities ?? []).map((a) => (
@@ -104,6 +109,30 @@ export default async function HotelDetailPage({
               <p className="text-gray-600 mt-4 whitespace-pre-line">{description}</p>
             )}
           </div>
+
+          {/* Location */}
+          {hotel.mapEmbedUrl && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-[#2d6a4f]" />
+                {isBn ? 'অবস্থান' : 'Location'}
+              </h2>
+              <p className="text-sm text-gray-500 mb-4">
+                {city}, {country}
+              </p>
+              <div className="rounded-xl overflow-hidden border border-gray-100">
+                <iframe
+                  src={hotel.mapEmbedUrl}
+                  title={`${name} — ${isBn ? 'গুগল ম্যাপ' : 'Google Map'}`}
+                  className="w-full h-72 md:h-96"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            </div>
+          )}
 
           {/* Rooms */}
           <h2 className="text-xl font-bold text-gray-900 mb-4">

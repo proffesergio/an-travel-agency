@@ -1,5 +1,6 @@
 import { setRequestLocale } from 'next-intl/server';
 import { Suspense } from 'react';
+import Image from 'next/image';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import HotelSearchBar from '@/components/hotels/HotelSearchBar';
@@ -48,8 +49,15 @@ export default async function HotelsPage({
         <div className="bg-[#1b4332] text-white pt-12 pb-20 px-4">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center gap-4 mb-8">
-              <div className="w-14 h-14 rounded-full bg-[#2d6a4f] flex items-center justify-center">
-                <HotelIcon className="w-7 h-7 text-[#74c69d]" />
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white shadow-lg overflow-hidden flex-shrink-0">
+                <Image
+                  src="/images/hotels/logo.jpeg"
+                  alt="M.M. Ajmeer International Limited"
+                  fill
+                  className="object-contain p-1"
+                  sizes="96px"
+                  priority
+                />
               </div>
               <div>
                 <h1 className="text-3xl sm:text-4xl font-bold">

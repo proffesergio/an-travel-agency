@@ -109,6 +109,8 @@ export interface PublicHotel {
   countryBn: string;
   starRating: number;
   distanceFromHaramMeters?: number;
+  bookingPhone: string;
+  mapEmbedUrl: string;
   description: string;
   descriptionBn: string;
   amenities: string[];
@@ -181,6 +183,44 @@ export async function getFeaturedHotels(limit = 4): Promise<PublicHotel[]> {
     .limit(limit)
     .lean();
   return docs.map((d) => toPublicHotel(d as unknown as Record<string, unknown>));
+}
+
+/** Lightweight hotel info for live search suggestions (curated inventory is small). */
+export interface HotelSuggestion {
+  name: string;
+  nameBn: string;
+  slug: string;
+  city: string;
+  cityBn: string;
+  country: string;
+  starRating: number;
+  imageUrl: string;
+  fromPrice: number;
+  currency: string;
+  featured: boolean;
+}
+
+export async function listHotelSuggestions(limit = 50): Promise<HotelSuggestion[]> {
+  await connectDB();
+  const docs = await Hotel.find({ available: true })
+    .sort({ featured: -1, updatedAt: -1 })
+    .limit(limit)
+    .lean();
+  return docs
+    .map((d) => toPublicHotel(d as unknown as Record<string, unknown>))
+    .map((h) => ({
+      name: h.name,
+      nameBn: h.nameBn,
+      slug: h.slug,
+      city: h.city,
+      cityBn: h.cityBn,
+      country: h.country,
+      starRating: h.starRating,
+      imageUrl: h.images?.[0] ?? '',
+      fromPrice: h.fromPrice,
+      currency: h.currency,
+      featured: h.featured,
+    }));
 }
 
 export interface DestinationSummary {

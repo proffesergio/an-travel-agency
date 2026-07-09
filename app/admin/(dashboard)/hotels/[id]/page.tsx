@@ -36,6 +36,7 @@ export default async function AdminHotelDetailPage({
               {hotel.distanceFromHaramMeters
                 ? ` · ${hotel.distanceFromHaramMeters}m from Haram`
                 : ''}
+              {hotel.bookingPhone ? ` · 📞 ${hotel.bookingPhone}` : ''}
             </p>
           </div>
         </div>

@@ -26,6 +26,8 @@ export default async function EditHotelPage({
     distanceFromHaramMeters: hotel.distanceFromHaramMeters
       ? String(hotel.distanceFromHaramMeters)
       : '',
+    bookingPhone: hotel.bookingPhone ?? '',
+    mapEmbedUrl: hotel.mapEmbedUrl ?? '',
     description: hotel.description,
     descriptionBn: hotel.descriptionBn,
     amenities: hotel.amenities ?? [],

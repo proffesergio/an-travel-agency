@@ -35,6 +35,8 @@ export interface HotelFormValues {
   countryBn: string;
   starRating: number;
   distanceFromHaramMeters: string;
+  bookingPhone: string;
+  mapEmbedUrl: string;
   description: string;
   descriptionBn: string;
   amenities: string[];
@@ -66,6 +68,8 @@ export const EMPTY_HOTEL: HotelFormValues = {
   countryBn: '',
   starRating: 3,
   distanceFromHaramMeters: '',
+  bookingPhone: '',
+  mapEmbedUrl: '',
   description: '',
   descriptionBn: '',
   amenities: [],
@@ -75,6 +79,12 @@ export const EMPTY_HOTEL: HotelFormValues = {
   available: true,
   rooms: [{ ...EMPTY_ROOM }],
 };
+
+/** Accept a pasted Google Maps "Embed a map" iframe snippet or a bare embed URL. */
+function extractMapEmbedUrl(value: string): string {
+  const iframeSrc = value.match(/src="([^"]+)"/);
+  return (iframeSrc ? iframeSrc[1] : value).trim();
+}
 
 function generateSlug(name: string) {
   return name
@@ -427,6 +437,35 @@ export default function HotelForm({
                 min="0"
                 className={inputCls}
                 placeholder="150"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Booking Phone Number
+                <span className="text-gray-400 font-normal"> — shown as Call / WhatsApp button</span>
+              </label>
+              <input
+                type="tel"
+                value={form.bookingPhone}
+                onChange={(e) => set({ bookingPhone: e.target.value })}
+                className={inputCls}
+                placeholder="+8801XXXXXXXXX"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Google Maps Embed URL
+                <span className="text-gray-400 font-normal">
+                  {' '}
+                  — on Google Maps: Share → Embed a map → paste the iframe code or URL here
+                </span>
+              </label>
+              <input
+                type="text"
+                value={form.mapEmbedUrl}
+                onChange={(e) => set({ mapEmbedUrl: extractMapEmbedUrl(e.target.value) })}
+                className={inputCls}
+                placeholder="https://www.google.com/maps/embed?pb=..."
               />
             </div>
           </div>

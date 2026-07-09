@@ -41,6 +41,11 @@ export async function createEnquiry(
   input: EnquiryInput & EnquiryBookingExtras
 ): Promise<IEnquiry> {
   await connectDB();
+  // TODO(whatsapp-notifications): when a hotel booking request (category 'hotel')
+  // is created, also push a WhatsApp notification to the hotel's bookingPhone
+  // (Hotel.bookingPhone) and/or the agency's WhatsApp via the WhatsApp Business
+  // Cloud API, so bookings are relayed instantly instead of only sitting in the
+  // admin enquiries list.
   return Enquiry.create({ ...input, status: 'new' });
 }
 

@@ -32,6 +32,15 @@ export const hotelInputSchema = z.object({
   countryBn: z.string().max(100).default(''),
   starRating: z.number().int().min(1).max(5).default(3),
   distanceFromHaramMeters: z.number().int().positive().optional(),
+  bookingPhone: z.string().max(30).default(''),
+  mapEmbedUrl: z
+    .string()
+    .max(2000)
+    .default('')
+    .refine(
+      (v) => v === '' || /^https:\/\/(www\.)?google\.[a-z.]+\/maps\/embed/.test(v),
+      'Must be a Google Maps embed URL (Share → Embed a map)'
+    ),
   description: z.string().default(''),
   descriptionBn: z.string().default(''),
   amenities: z.array(z.enum(AMENITY_KEYS)).default([]),
