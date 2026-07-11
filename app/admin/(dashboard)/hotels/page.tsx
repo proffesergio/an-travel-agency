@@ -11,8 +11,8 @@ export default async function AdminHotelsPage() {
   const hotels = await listHotels();
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Hotels</h1>
           <p className="text-gray-500 text-sm mt-1">
@@ -21,7 +21,7 @@ export default async function AdminHotelsPage() {
         </div>
         <Link
           href="/admin/hotels/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#2d6a4f] text-white rounded-lg hover:bg-[#1b4332] transition-colors font-medium"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#2d6a4f] text-white rounded-lg hover:bg-[#1b4332] transition-colors font-medium self-start"
         >
           <Plus className="w-4 h-4" />
           Add Hotel
@@ -35,7 +35,8 @@ export default async function AdminHotelsPage() {
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[720px] text-sm">
             <thead className="bg-gray-50 text-left text-gray-500">
               <tr>
                 <th className="px-4 py-3 font-medium">Hotel</th>
@@ -121,6 +122,7 @@ export default async function AdminHotelsPage() {
               })}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

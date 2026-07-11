@@ -21,6 +21,7 @@ interface FeaturedHotel {
 
 export default function HotelSearchTeaser({ locale }: { locale: string }) {
   const isBn = locale === 'bn';
+  const isAr = locale === 'ar';
   const [hotels, setHotels] = useState<FeaturedHotel[]>([]);
 
   useEffect(() => {
@@ -39,12 +40,14 @@ export default function HotelSearchTeaser({ locale }: { locale: string }) {
           </div>
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-              {isBn ? 'আপনার হোটেল খুঁজুন' : 'Find Your Hotel'}
+              {isBn ? 'আপনার হোটেল খুঁজুন' : isAr ? 'ابحث عن فندقك' : 'Find Your Hotel'}
             </h2>
             <p className="text-gray-500 text-sm">
               {isBn
                 ? 'মক্কা, মদিনা ও দুবাইয়ের সেরা হোটেল — সরাসরি বুকিং অনুরোধ'
-                : 'Handpicked hotels in Makkah, Madinah & Dubai — request a booking in minutes'}
+                : isAr
+                  ? 'فنادق مختارة في مكة والمدينة ودبي — اطلب الحجز خلال دقائق'
+                  : 'Handpicked hotels in Makkah, Madinah & Dubai — request a booking in minutes'}
             </p>
           </div>
         </div>
@@ -84,7 +87,7 @@ export default function HotelSearchTeaser({ locale }: { locale: string }) {
                   <p className="text-sm font-bold text-[#1b4332] mt-1">
                     {formatMoney(h.fromPrice, h.currency)}
                     <span className="text-xs text-gray-400 font-normal">
-                      {isBn ? '/রাত' : '/night'}
+                      {isBn ? '/রাত' : isAr ? '/ليلة' : '/night'}
                     </span>
                   </p>
                 </div>

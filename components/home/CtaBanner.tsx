@@ -10,7 +10,11 @@ const WHATSAPP_NUMBER = '966537311069';
 export default function CtaBanner() {
   const t = useTranslations('cta');
   const pathname = usePathname();
-  const locale = pathname.startsWith('/bn') ? 'bn' : 'en';
+  const locale = pathname.startsWith('/bn')
+    ? 'bn'
+    : pathname.startsWith('/ar')
+      ? 'ar'
+      : 'en';
 
   const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=Hello%2C%20I%20am%20interested%20in%20your%20travel%20packages.`;
 

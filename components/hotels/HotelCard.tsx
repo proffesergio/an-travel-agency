@@ -5,6 +5,7 @@ import {
   AMENITY_LABELS,
   formatMoney,
   formatHaramDistance,
+  uiLang,
   type AmenityKey,
 } from '@/lib/hotels-shared';
 import type { PublicHotel } from '@/lib/services/hotels';
@@ -19,6 +20,8 @@ export default function HotelCard({
   query?: string; // preserved search params appended to the detail link
 }) {
   const isBn = locale === 'bn';
+  const isAr = locale === 'ar';
+  const lang = uiLang(locale);
   const name = isBn ? hotel.nameBn || hotel.name : hotel.name;
   const city = isBn ? hotel.cityBn || hotel.city : hotel.city;
   const country = isBn ? hotel.countryBn || hotel.country : hotel.country;
@@ -53,24 +56,24 @@ export default function HotelCard({
           </span>
           {hotel.featured && (
             <span className="text-xs font-semibold text-white bg-[#2d6a4f]/90 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-sm">
-              {isBn ? 'ফিচার্ড' : 'Featured'}
+              {isBn ? 'ফিচার্ড' : isAr ? 'مميز' : 'Featured'}
             </span>
           )}
         </div>
         {typeof hotel.distanceFromHaramMeters === 'number' && (
           <div className="absolute bottom-3 left-3">
             <span className="inline-flex items-center gap-1 text-xs font-bold text-white bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-full">
-              🕋 {formatHaramDistance(hotel.distanceFromHaramMeters, isBn)}
+              🕋 {formatHaramDistance(hotel.distanceFromHaramMeters, lang)}
             </span>
           </div>
         )}
         <div className="absolute bottom-3 right-3">
           <span className="inline-flex items-baseline gap-1 text-white bg-[#2d6a4f]/90 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm">
             <span className="text-[10px] uppercase tracking-wide opacity-80">
-              {isBn ? 'শুরু' : 'From'}
+              {isBn ? 'শুরু' : isAr ? 'ابتداءً من' : 'From'}
             </span>
             <span className="text-sm font-bold">{formatMoney(hotel.fromPrice, hotel.currency)}</span>
-            <span className="text-[10px] opacity-80">{isBn ? '/রাত' : '/night'}</span>
+            <span className="text-[10px] opacity-80">{isBn ? '/রাত' : isAr ? '/ليلة' : '/night'}</span>
           </span>
         </div>
       </div>
@@ -89,12 +92,7 @@ export default function HotelCard({
           <p className="text-xs text-gray-500 mt-3 line-clamp-1">
             {hotel.amenities
               .slice(0, 4)
-              .map(
-                (a) =>
-                  (isBn
-                    ? AMENITY_LABELS[a as AmenityKey]?.bn
-                    : AMENITY_LABELS[a as AmenityKey]?.en) ?? a
-              )
+              .map((a) => AMENITY_LABELS[a as AmenityKey]?.[lang] ?? a)
               .join(' · ')}
           </p>
         )}
@@ -116,14 +114,14 @@ export default function HotelCard({
               </div>
             ))}
             <span className="text-xs text-gray-400 ml-1">
-              {isBn ? `${availableRooms}টি রুম টাইপ` : `${availableRooms} room types`}
+              {isBn ? `${availableRooms}টি রুম টাইপ` : isAr ? `${availableRooms} أنواع غرف` : `${availableRooms} room types`}
             </span>
           </div>
         )}
 
         <div className="flex items-center justify-between pt-4 mt-auto border-t border-gray-100">
           <span className="text-sm font-semibold text-[#2d6a4f]">
-            {isBn ? 'রুম দেখুন ও বুক করুন' : 'View Rooms & Book'}
+            {isBn ? 'রুম দেখুন ও বুক করুন' : isAr ? 'عرض الغرف والحجز' : 'View Rooms & Book'}
           </span>
           <span className="w-9 h-9 rounded-full bg-[#2d6a4f] text-white flex items-center justify-center group-hover:bg-[#1b4332] group-hover:translate-x-1 transition-all">
             <ArrowRight className="w-4 h-4" />

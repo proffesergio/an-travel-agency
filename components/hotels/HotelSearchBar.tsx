@@ -55,6 +55,7 @@ export default function HotelSearchBar({
 }) {
   const router = useRouter();
   const isBn = locale === 'bn';
+  const isAr = locale === 'ar';
   const [city, setCity] = useState(initialCity);
   const [checkIn, setCheckIn] = useState(initialCheckIn);
   const [checkOut, setCheckOut] = useState(initialCheckOut);
@@ -113,7 +114,7 @@ export default function HotelSearchBar({
     >
       <div className="relative flex-[2]" ref={boxRef}>
         <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">
-          {isBn ? 'শহর / হোটেল' : 'City / Hotel'}
+          {isBn ? 'শহর / হোটেল' : isAr ? 'المدينة / الفندق' : 'City / Hotel'}
         </label>
         <div className="relative">
           <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -123,7 +124,7 @@ export default function HotelSearchBar({
             onFocus={() => setOpen(true)}
             onChange={(e) => setCity(e.target.value)}
             className={`${inputCls} pl-9`}
-            placeholder={isBn ? 'যেমন: মক্কা, দুবাই' : 'e.g., Makkah, Dubai'}
+            placeholder={isBn ? 'যেমন: মক্কা, দুবাই' : isAr ? 'مثال: مكة، دبي' : 'e.g., Makkah, Dubai'}
           />
         </div>
         {open && (visibleDestinations.length > 0 || visibleProperties.length > 0) && (
@@ -131,7 +132,7 @@ export default function HotelSearchBar({
             {visibleDestinations.length > 0 && (
               <>
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide px-2 mb-1">
-                  {isBn ? 'গন্তব্য' : 'Destinations'}
+                  {isBn ? 'গন্তব্য' : isAr ? 'الوجهات' : 'Destinations'}
                 </p>
                 {visibleDestinations.map((d) => (
                   <button
@@ -149,7 +150,7 @@ export default function HotelSearchBar({
                       <span className="text-gray-400"> · {d.country}</span>
                     </span>
                     <span className="text-xs text-gray-400">
-                      {d.count} {isBn ? 'হোটেল' : 'hotels'}
+                      {d.count} {isBn ? 'হোটেল' : isAr ? 'فندق' : 'hotels'}
                     </span>
                   </button>
                 ))}
@@ -158,7 +159,7 @@ export default function HotelSearchBar({
             {visibleProperties.length > 0 && (
               <>
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide px-2 mt-2 mb-1">
-                  {isBn ? 'হোটেল' : 'Hotels'}
+                  {isBn ? 'হোটেল' : isAr ? 'الفنادق' : 'Hotels'}
                 </p>
                 {visibleProperties.map((p) => (
                   <button
@@ -200,7 +201,7 @@ export default function HotelSearchBar({
                           {formatMoney(p.fromPrice, p.currency)}
                         </span>
                         <span className="block text-[10px] text-gray-400">
-                          {isBn ? 'প্রতি রাত থেকে' : 'from /night'}
+                          {isBn ? 'প্রতি রাত থেকে' : isAr ? 'ابتداءً من /ليلة' : 'from /night'}
                         </span>
                       </span>
                     )}
@@ -214,7 +215,7 @@ export default function HotelSearchBar({
 
       <div className="flex-1">
         <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">
-          {isBn ? 'চেক ইন' : 'Check In'}
+          {isBn ? 'চেক ইন' : isAr ? 'تسجيل الوصول' : 'Check In'}
         </label>
         <input
           type="date"
@@ -226,7 +227,7 @@ export default function HotelSearchBar({
       </div>
       <div className="flex-1">
         <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">
-          {isBn ? 'চেক আউট' : 'Check Out'}
+          {isBn ? 'চেক আউট' : isAr ? 'تسجيل المغادرة' : 'Check Out'}
         </label>
         <input
           type="date"
@@ -238,7 +239,7 @@ export default function HotelSearchBar({
       </div>
       <div className="flex-1">
         <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">
-          {isBn ? 'রুম ও অতিথি' : 'Rooms & Guests'}
+          {isBn ? 'রুম ও অতিথি' : isAr ? 'الغرف والضيوف' : 'Rooms & Guests'}
         </label>
         <div className="flex gap-1">
           <select
@@ -249,7 +250,7 @@ export default function HotelSearchBar({
           >
             {[1, 2, 3, 4, 5].map((n) => (
               <option key={n} value={n}>
-                {n} {isBn ? 'রুম' : n > 1 ? 'Rooms' : 'Room'}
+                {n} {isBn ? 'রুম' : isAr ? 'غرفة' : n > 1 ? 'Rooms' : 'Room'}
               </option>
             ))}
           </select>
@@ -261,7 +262,7 @@ export default function HotelSearchBar({
           >
             {[1, 2, 3, 4, 5, 6, 8, 10].map((n) => (
               <option key={n} value={n}>
-                {n} {isBn ? 'প্রাপ্তবয়স্ক' : n > 1 ? 'Adults' : 'Adult'}
+                {n} {isBn ? 'প্রাপ্তবয়স্ক' : isAr ? 'بالغ' : n > 1 ? 'Adults' : 'Adult'}
               </option>
             ))}
           </select>
@@ -273,7 +274,7 @@ export default function HotelSearchBar({
           >
             {[0, 1, 2, 3, 4].map((n) => (
               <option key={n} value={n}>
-                {n} {isBn ? 'শিশু' : n === 1 ? 'Child' : 'Children'}
+                {n} {isBn ? 'শিশু' : isAr ? 'طفل' : n === 1 ? 'Child' : 'Children'}
               </option>
             ))}
           </select>
@@ -286,7 +287,7 @@ export default function HotelSearchBar({
           className="w-full lg:w-auto inline-flex items-center justify-center gap-2 px-8 py-2.5 bg-[#2d6a4f] text-white rounded-lg hover:bg-[#1b4332] transition-colors font-semibold"
         >
           <Search className="w-4 h-4" />
-          {isBn ? 'খুঁজুন' : 'Search'}
+          {isBn ? 'খুঁজুন' : isAr ? 'بحث' : 'Search'}
         </button>
       </div>
     </form>

@@ -11,6 +11,7 @@ export default async function HajjPage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   setRequestLocale(locale);
   const isBn = locale === 'bn';
+  const isAr = locale === 'ar';
   const packages = await getDisplayPackagesByCategory('hajj');
 
   return (
@@ -25,12 +26,14 @@ export default async function HajjPage({ params }: { params: Promise<{ locale: s
             </div>
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold">
-                {isBn ? 'হজ্জ প্যাকেজ ২০২৫' : 'Hajj Packages 2025'}
+                {isBn ? 'হজ্জ প্যাকেজ ২০২৫' : isAr ? 'باقات الحج ٢٠٢٥' : 'Hajj Packages 2025'}
               </h1>
               <p className="text-green-200 mt-1">
                 {isBn
                   ? 'সরকার অনুমোদিত হজ্জ প্যাকেজ — সম্পূর্ণ সহায়তাসহ'
-                  : 'Government-approved packages with complete support — flights, hotels, visa & guidance'}
+                  : isAr
+                    ? 'باقات حج معتمدة حكومياً مع دعم كامل — طيران وفنادق وتأشيرة وإرشاد'
+                    : 'Government-approved packages with complete support — flights, hotels, visa & guidance'}
               </p>
             </div>
           </div>

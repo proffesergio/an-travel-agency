@@ -12,6 +12,7 @@ import {
   Hotel,
 } from 'lucide-react';
 import { Toaster } from '@/components/admin/Toaster';
+import AdminShell from '@/components/admin/AdminShell';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -30,10 +31,9 @@ export default async function AdminDashboardLayout({
   const session = await auth();
   if (!session) redirect('/admin/login');
 
-  return (
-    <div className="min-h-screen bg-gray-100 flex">
-      <aside className="w-64 bg-[#1b4332] text-white flex flex-col">
-        <div className="p-4 border-b border-green-800">
+  const sidebar = (
+    <>
+      <div className="p-4 border-b border-green-800">
           <Link href="/en" className="flex items-center gap-3">
             <Image
               src="/ATHAR-NUR-Logo.png"
@@ -89,10 +89,13 @@ export default async function AdminDashboardLayout({
             </button>
           </form>
         </div>
-      </aside>
+    </>
+  );
 
-      <main className="flex-1 overflow-auto">{children}</main>
+  return (
+    <>
+      <AdminShell sidebar={sidebar}>{children}</AdminShell>
       <Toaster />
-    </div>
+    </>
   );
 }

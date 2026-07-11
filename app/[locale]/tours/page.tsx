@@ -11,6 +11,7 @@ export default async function ToursPage({ params }: { params: Promise<{ locale: 
   const { locale } = await params;
   setRequestLocale(locale);
   const isBn = locale === 'bn';
+  const isAr = locale === 'ar';
   const packages = await getDisplayPackagesByCategory('tour');
 
   return (
@@ -24,12 +25,14 @@ export default async function ToursPage({ params }: { params: Promise<{ locale: 
             </div>
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold">
-                {isBn ? 'আন্তর্জাতিক ট্যুর' : 'International Tours'}
+                {isBn ? 'আন্তর্জাতিক ট্যুর' : isAr ? 'جولات دولية' : 'International Tours'}
               </h1>
               <p className="text-green-200 mt-1">
                 {isBn
                   ? 'দুবাই, মালয়েশিয়া, থাইল্যান্ডসহ আরও অনেক গন্তব্যে কিউরেটেড ট্যুর'
-                  : 'Curated tours to Dubai, Malaysia, Thailand and beyond — fully guided packages'}
+                  : isAr
+                    ? 'جولات مختارة إلى دبي وماليزيا وتايلاند وغيرها — باقات مع مرشد بالكامل'
+                    : 'Curated tours to Dubai, Malaysia, Thailand and beyond — fully guided packages'}
               </p>
             </div>
           </div>

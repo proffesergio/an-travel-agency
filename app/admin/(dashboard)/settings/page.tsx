@@ -69,7 +69,7 @@ export default async function AdminSettingsPage() {
   const configuredCount = integrations.filter((i) => i.status === 'configured').length;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-4 sm:p-6 max-w-4xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
         <div className="p-2.5 rounded-lg bg-[#2d6a4f]/10 text-[#2d6a4f]">
           <SettingsIcon className="w-6 h-6" />

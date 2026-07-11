@@ -36,6 +36,7 @@ export default function HotelBookingForm({
   initialChildren?: number;
 }) {
   const isBn = locale === 'bn';
+  const isAr = locale === 'ar';
   const formRef = useRef<HTMLDivElement>(null);
   const [roomType, setRoomType] = useState(initialRoom || rooms[0]?.name || '');
   const [checkIn, setCheckIn] = useState(initialCheckIn);
@@ -91,7 +92,11 @@ export default function HotelBookingForm({
       if (!res.ok) throw new Error(data.error || 'Failed to submit');
       setDone(true);
       toast.success(
-        isBn ? 'বুকিং অনুরোধ পাঠানো হয়েছে!' : 'Booking request sent! We will contact you shortly.'
+        isBn
+          ? 'বুকিং অনুরোধ পাঠানো হয়েছে!'
+          : isAr
+            ? 'تم إرسال طلب الحجز! سنتواصل معك قريباً.'
+            : 'Booking request sent! We will contact you shortly.'
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
@@ -109,12 +114,14 @@ export default function HotelBookingForm({
       >
         <CalendarCheck className="w-10 h-10 text-[#2d6a4f] mx-auto mb-3" />
         <h3 className="text-lg font-semibold text-[#1b4332]">
-          {isBn ? 'অনুরোধ গৃহীত হয়েছে!' : 'Request received!'}
+          {isBn ? 'অনুরোধ গৃহীত হয়েছে!' : isAr ? 'تم استلام الطلب!' : 'Request received!'}
         </h3>
         <p className="text-gray-600 text-sm mt-1">
           {isBn
             ? 'আমরা শীঘ্রই আপনার সাথে হোয়াটসঅ্যাপ বা ফোনে যোগাযোগ করব।'
-            : 'Our team will confirm availability and contact you via WhatsApp or phone shortly.'}
+            : isAr
+              ? 'سيتأكد فريقنا من التوفر ويتواصل معك عبر واتساب أو الهاتف قريباً.'
+              : 'Our team will confirm availability and contact you via WhatsApp or phone shortly.'}
         </p>
       </div>
     );
@@ -127,12 +134,14 @@ export default function HotelBookingForm({
       className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
     >
       <h2 className="text-xl font-bold text-gray-900 mb-1">
-        {isBn ? 'বুকিং অনুরোধ' : 'Booking Request'}
+        {isBn ? 'বুকিং অনুরোধ' : isAr ? 'طلب حجز' : 'Booking Request'}
       </h2>
       <p className="text-sm text-gray-500 mb-5">
         {isBn
           ? 'কোনো অগ্রিম পেমেন্ট লাগবে না — আমরা প্রাপ্যতা নিশ্চিত করে যোগাযোগ করব।'
-          : 'No advance payment needed — we confirm availability first, then arrange payment.'}
+          : isAr
+            ? 'لا حاجة لدفعة مقدمة — نتأكد من التوفر أولاً ثم نرتب الدفع.'
+            : 'No advance payment needed — we confirm availability first, then arrange payment.'}
       </p>
 
       {error && (
@@ -144,7 +153,7 @@ export default function HotelBookingForm({
       <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="md:col-span-1">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {isBn ? 'রুম টাইপ' : 'Room Type'} *
+            {isBn ? 'রুম টাইপ' : isAr ? 'نوع الغرفة' : 'Room Type'} *
           </label>
           <select
             value={roomType}
@@ -161,7 +170,7 @@ export default function HotelBookingForm({
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {isBn ? 'চেক ইন' : 'Check In'} *
+            {isBn ? 'চেক ইন' : isAr ? 'تسجيل الوصول' : 'Check In'} *
           </label>
           <input
             type="date"
@@ -174,7 +183,7 @@ export default function HotelBookingForm({
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {isBn ? 'চেক আউট' : 'Check Out'} *
+            {isBn ? 'চেক আউট' : isAr ? 'تسجيل المغادرة' : 'Check Out'} *
           </label>
           <input
             type="date"
@@ -187,7 +196,7 @@ export default function HotelBookingForm({
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {isBn ? 'রুম' : 'Rooms'}
+            {isBn ? 'রুম' : isAr ? 'الغرف' : 'Rooms'}
           </label>
           <select
             value={roomsCount}
@@ -203,7 +212,7 @@ export default function HotelBookingForm({
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {isBn ? 'প্রাপ্তবয়স্ক' : 'Adults'}
+            {isBn ? 'প্রাপ্তবয়স্ক' : isAr ? 'البالغون' : 'Adults'}
           </label>
           <select
             value={adults}
@@ -219,7 +228,7 @@ export default function HotelBookingForm({
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {isBn ? 'শিশু' : 'Children'}
+            {isBn ? 'শিশু' : isAr ? 'الأطفال' : 'Children'}
           </label>
           <select
             value={children}
@@ -235,7 +244,7 @@ export default function HotelBookingForm({
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {isBn ? 'আপনার নাম' : 'Your Name'} *
+            {isBn ? 'আপনার নাম' : isAr ? 'اسمك' : 'Your Name'} *
           </label>
           <input
             type="text"
@@ -243,12 +252,12 @@ export default function HotelBookingForm({
             onChange={(e) => setName(e.target.value)}
             required
             className={inputCls}
-            placeholder={isBn ? 'পূর্ণ নাম' : 'Full name'}
+            placeholder={isBn ? 'পূর্ণ নাম' : isAr ? 'الاسم الكامل' : 'Full name'}
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {isBn ? 'ফোন / হোয়াটসঅ্যাপ' : 'Phone / WhatsApp'} *
+            {isBn ? 'ফোন / হোয়াটসঅ্যাপ' : isAr ? 'الهاتف / واتساب' : 'Phone / WhatsApp'} *
           </label>
           <input
             type="tel"
@@ -261,7 +270,7 @@ export default function HotelBookingForm({
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {isBn ? 'ইমেইল (ঐচ্ছিক)' : 'Email (optional)'}
+            {isBn ? 'ইমেইল (ঐচ্ছিক)' : isAr ? 'البريد الإلكتروني (اختياري)' : 'Email (optional)'}
           </label>
           <input
             type="email"
@@ -273,14 +282,14 @@ export default function HotelBookingForm({
         </div>
         <div className="md:col-span-3">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {isBn ? 'বার্তা (ঐচ্ছিক)' : 'Message (optional)'}
+            {isBn ? 'বার্তা (ঐচ্ছিক)' : isAr ? 'رسالة (اختياري)' : 'Message (optional)'}
           </label>
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={2}
             className={`${inputCls} resize-none`}
-            placeholder={isBn ? 'বিশেষ অনুরোধ...' : 'Special requests...'}
+            placeholder={isBn ? 'বিশেষ অনুরোধ...' : isAr ? 'طلبات خاصة...' : 'Special requests...'}
           />
         </div>
         <div className="md:col-span-3 flex justify-end">
@@ -293,10 +302,14 @@ export default function HotelBookingForm({
             {loading
               ? isBn
                 ? 'পাঠানো হচ্ছে...'
-                : 'Sending...'
+                : isAr
+                  ? 'جارٍ الإرسال...'
+                  : 'Sending...'
               : isBn
                 ? 'বুকিং অনুরোধ পাঠান'
-                : 'Send Booking Request'}
+                : isAr
+                  ? 'إرسال طلب الحجز'
+                  : 'Send Booking Request'}
           </button>
         </div>
       </form>

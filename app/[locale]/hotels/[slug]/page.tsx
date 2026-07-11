@@ -12,6 +12,7 @@ import {
   AMENITY_LABELS,
   formatMoney,
   formatHaramDistance,
+  uiLang,
   type AmenityKey,
 } from '@/lib/hotels-shared';
 
@@ -28,6 +29,8 @@ export default async function HotelDetailPage({
   setRequestLocale(locale);
   const sp = await searchParams;
   const isBn = locale === 'bn';
+  const isAr = locale === 'ar';
+  const lang = uiLang(locale);
 
   const hotel = await getHotelBySlug(slug);
   if (!hotel || !hotel.available) notFound();
@@ -69,7 +72,7 @@ export default async function HotelDetailPage({
                 </p>
                 {typeof hotel.distanceFromHaramMeters === 'number' && (
                   <span className="inline-block mt-2 text-sm font-medium bg-green-50 text-[#2d6a4f] px-3 py-1 rounded-full">
-                    🕋 {formatHaramDistance(hotel.distanceFromHaramMeters, isBn)}
+                    🕋 {formatHaramDistance(hotel.distanceFromHaramMeters, lang)}
                   </span>
                 )}
               </div>
@@ -80,7 +83,7 @@ export default async function HotelDetailPage({
                     className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#2d6a4f] text-white rounded-lg hover:bg-[#1b4332] transition-colors font-semibold text-sm"
                   >
                     <Phone className="w-4 h-4" />
-                    {isBn ? 'বুক করতে কল করুন' : 'Call to Book'} — {bookingPhone}
+                    {isBn ? 'বুক করতে কল করুন' : isAr ? 'اتصل للحجز' : 'Call to Book'} — {bookingPhone}
                   </a>
                   {whatsAppNumber && (
                     <a
@@ -90,7 +93,7 @@ export default async function HotelDetailPage({
                       className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-[#2d6a4f] text-[#2d6a4f] rounded-lg hover:bg-green-50 transition-colors font-semibold text-sm"
                     >
                       <MessageCircle className="w-4 h-4" />
-                      {isBn ? 'হোয়াটসঅ্যাপে বুক করুন' : 'Book via WhatsApp'}
+                      {isBn ? 'হোয়াটসঅ্যাপে বুক করুন' : isAr ? 'احجز عبر واتساب' : 'Book via WhatsApp'}
                     </a>
                   )}
                 </div>
@@ -99,9 +102,7 @@ export default async function HotelDetailPage({
             <div className="flex flex-wrap gap-2 mt-4">
               {(hotel.amenities ?? []).map((a) => (
                 <span key={a} className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full">
-                  {(isBn
-                    ? AMENITY_LABELS[a as AmenityKey]?.bn
-                    : AMENITY_LABELS[a as AmenityKey]?.en) ?? a}
+                  {AMENITY_LABELS[a as AmenityKey]?.[lang] ?? a}
                 </span>
               ))}
             </div>
@@ -115,7 +116,7 @@ export default async function HotelDetailPage({
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
               <h2 className="text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-[#2d6a4f]" />
-                {isBn ? 'অবস্থান' : 'Location'}
+                {isBn ? 'অবস্থান' : isAr ? 'الموقع' : 'Location'}
               </h2>
               <p className="text-sm text-gray-500 mb-4">
                 {city}, {country}
@@ -123,7 +124,7 @@ export default async function HotelDetailPage({
               <div className="rounded-xl overflow-hidden border border-gray-100">
                 <iframe
                   src={hotel.mapEmbedUrl}
-                  title={`${name} — ${isBn ? 'গুগল ম্যাপ' : 'Google Map'}`}
+                  title={`${name} — ${isBn ? 'গুগল ম্যাপ' : isAr ? 'خرائط جوجل' : 'Google Map'}`}
                   className="w-full h-72 md:h-96"
                   style={{ border: 0 }}
                   loading="lazy"
@@ -136,7 +137,7 @@ export default async function HotelDetailPage({
 
           {/* Rooms */}
           <h2 className="text-xl font-bold text-gray-900 mb-4">
-            {isBn ? 'আপনার রুম বেছে নিন' : 'Choose Your Room'}
+            {isBn ? 'আপনার রুম বেছে নিন' : isAr ? 'اختر غرفتك' : 'Choose Your Room'}
           </h2>
           <div className="space-y-4 mb-8">
             {rooms.map((room, i) => (
@@ -171,9 +172,9 @@ export default async function HotelDetailPage({
                     )}
                     <span className="inline-flex items-center gap-1">
                       <Users className="w-4 h-4" />
-                      {room.capacity?.adults} {isBn ? 'প্রাপ্তবয়স্ক' : 'adults'}
+                      {room.capacity?.adults} {isBn ? 'প্রাপ্তবয়স্ক' : isAr ? 'بالغين' : 'adults'}
                       {room.capacity?.children
-                        ? ` + ${room.capacity.children} ${isBn ? 'শিশু' : 'children'}`
+                        ? ` + ${room.capacity.children} ${isBn ? 'শিশু' : isAr ? 'أطفال' : 'children'}`
                         : ''}
                     </span>
                   </p>
@@ -182,12 +183,12 @@ export default async function HotelDetailPage({
                   <p className="text-lg font-bold text-[#1b4332]">
                     {formatMoney(room.pricePerNight, hotel.currency)}
                     <span className="text-xs text-gray-400 font-normal">
-                      {isBn ? '/রাত' : '/night'}
+                      {isBn ? '/রাত' : isAr ? '/ليلة' : '/night'}
                     </span>
                   </p>
                   <BookRoomButton
                     roomName={room.name}
-                    label={isBn ? 'এই রুম বুক করুন' : 'Book This Room'}
+                    label={isBn ? 'এই রুম বুক করুন' : isAr ? 'احجز هذه الغرفة' : 'Book This Room'}
                   />
                 </div>
               </div>

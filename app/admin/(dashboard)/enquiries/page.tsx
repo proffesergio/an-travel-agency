@@ -40,7 +40,7 @@ export default async function AdminEnquiriesPage({
   const paymentOptions = ['all', 'paid', 'pending', 'failed'];
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       {dbError && <DatabaseUnreachableBanner error={dbError} />}
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">

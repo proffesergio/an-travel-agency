@@ -17,7 +17,7 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
 
-  if (!routing.locales.includes(locale as 'en' | 'bn')) {
+  if (!routing.locales.includes(locale as 'en' | 'bn' | 'ar')) {
     notFound();
   }
 
@@ -27,9 +27,15 @@ export default async function LocaleLayout({
 
   const messages = await getMessages();
 
+  // Arabic reads right-to-left; the root <html> lives outside the [locale]
+  // segment (admin shares it), so direction is applied on this wrapper.
+  const dir = locale === 'ar' ? 'rtl' : 'ltr';
+
   return (
     <NextIntlClientProvider messages={messages}>
-      {children}
+      <div lang={locale} dir={dir} className="contents">
+        {children}
+      </div>
     </NextIntlClientProvider>
   );
 }

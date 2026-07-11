@@ -23,6 +23,7 @@ export default async function HotelsPage({
   setRequestLocale(locale);
   const sp = await searchParams;
   const isBn = locale === 'bn';
+  const isAr = locale === 'ar';
 
   let hotels: Awaited<ReturnType<typeof searchHotels>> = [];
   try {
@@ -61,12 +62,14 @@ export default async function HotelsPage({
               </div>
               <div>
                 <h1 className="text-3xl sm:text-4xl font-bold">
-                  {isBn ? 'হোটেল বুকিং' : 'Hotel Booking'}
+                  {isBn ? 'হোটেল বুকিং' : isAr ? 'حجز الفنادق' : 'Hotel Booking'}
                 </h1>
                 <p className="text-green-200 mt-1">
                   {isBn
                     ? 'মক্কা, মদিনা, দুবাইসহ সেরা হোটেলে সেরা দামে থাকুন'
-                    : 'Handpicked hotels in Makkah, Madinah, Dubai and beyond — best rates, personal service'}
+                    : isAr
+                      ? 'فنادق مختارة في مكة والمدينة ودبي وغيرها — أفضل الأسعار وخدمة شخصية'
+                      : 'Handpicked hotels in Makkah, Madinah, Dubai and beyond — best rates, personal service'}
                 </p>
               </div>
             </div>
@@ -91,7 +94,7 @@ export default async function HotelsPage({
           </Suspense>
 
           <p className="text-sm text-gray-500 mt-4 mb-4">
-            {isBn ? `${hotels.length}টি হোটেল পাওয়া গেছে` : `${hotels.length} hotels found`}
+            {isBn ? `${hotels.length}টি হোটেল পাওয়া গেছে` : isAr ? `تم العثور على ${hotels.length} فندقاً` : `${hotels.length} hotels found`}
             {sp.city ? ` — ${sp.city}` : ''}
           </p>
 
@@ -99,12 +102,14 @@ export default async function HotelsPage({
             <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center">
               <HotelIcon className="w-12 h-12 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-600 font-medium">
-                {isBn ? 'কোনো হোটেল পাওয়া যায়নি' : 'No hotels match your search'}
+                {isBn ? 'কোনো হোটেল পাওয়া যায়নি' : isAr ? 'لا توجد فنادق مطابقة لبحثك' : 'No hotels match your search'}
               </p>
               <p className="text-gray-400 text-sm mt-1">
                 {isBn
                   ? 'ফিল্টার পরিবর্তন করে আবার চেষ্টা করুন'
-                  : 'Try adjusting your filters or searching a different city'}
+                  : isAr
+                    ? 'جرّب تعديل الفلاتر أو البحث في مدينة أخرى'
+                    : 'Try adjusting your filters or searching a different city'}
               </p>
             </div>
           ) : (

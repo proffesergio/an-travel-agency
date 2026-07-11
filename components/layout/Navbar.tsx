@@ -12,6 +12,7 @@ import { Analytics } from "@vercel/analytics/next";
 const LOCALES = [
   { code: 'en', label: 'EN', fullLabel: 'English' },
   { code: 'bn', label: 'বাং', fullLabel: 'বাংলা' },
+  { code: 'ar', label: 'ع', fullLabel: 'العربية' },
 ];
 
 export default function Navbar() {
@@ -29,7 +30,11 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const currentLocale = pathname.startsWith('/bn') ? 'bn' : 'en';
+  const currentLocale = pathname.startsWith('/bn')
+    ? 'bn'
+    : pathname.startsWith('/ar')
+      ? 'ar'
+      : 'en';
 
   const serviceLinks = [
     { href: '/hajj', label: t('hajj') },

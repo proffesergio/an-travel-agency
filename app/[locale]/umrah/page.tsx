@@ -11,6 +11,7 @@ export default async function UmrahPage({ params }: { params: Promise<{ locale: 
   const { locale } = await params;
   setRequestLocale(locale);
   const isBn = locale === 'bn';
+  const isAr = locale === 'ar';
   const packages = await getDisplayPackagesByCategory('umrah');
 
   return (
@@ -24,12 +25,14 @@ export default async function UmrahPage({ params }: { params: Promise<{ locale: 
             </div>
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold">
-                {isBn ? 'উমরাহ প্যাকেজ' : 'Umrah Packages'}
+                {isBn ? 'উমরাহ প্যাকেজ' : isAr ? 'باقات العمرة' : 'Umrah Packages'}
               </h1>
               <p className="text-green-200 mt-1">
                 {isBn
                   ? 'সারা বছর উমরাহ — ব্যক্তি ও গ্রুপের জন্য বিভিন্ন প্যাকেজ'
-                  : 'Year-round Umrah packages for individuals and groups — all budgets welcome'}
+                  : isAr
+                    ? 'باقات عمرة على مدار العام للأفراد والمجموعات — لجميع الميزانيات'
+                    : 'Year-round Umrah packages for individuals and groups — all budgets welcome'}
               </p>
             </div>
           </div>

@@ -8,6 +8,7 @@ import {
   AMENITY_LABELS,
   HOTEL_SORT_OPTIONS,
   isHaramCity,
+  uiLang,
 } from '@/lib/hotels-shared';
 
 const chipCls =
@@ -18,6 +19,8 @@ export default function HotelFilterBar({ locale }: { locale: string }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isBn = locale === 'bn';
+  const isAr = locale === 'ar';
+  const lang = uiLang(locale);
   const [showAmenities, setShowAmenities] = useState(false);
 
   const city = searchParams.get('city') ?? '';
@@ -56,7 +59,7 @@ export default function HotelFilterBar({ locale }: { locale: string }) {
     <div className="flex flex-wrap items-center gap-2">
       <span className="inline-flex items-center gap-1.5 text-sm text-gray-500 mr-1">
         <SlidersHorizontal className="w-4 h-4" />
-        {isBn ? 'ফিল্টার' : 'Filters'}
+        {isBn ? 'ফিল্টার' : isAr ? 'الفلاتر' : 'Filters'}
       </span>
 
       {[5, 4, 3].map((s) => (
@@ -80,7 +83,7 @@ export default function HotelFilterBar({ locale }: { locale: string }) {
         className={`${chipCls} bg-white border-gray-200 text-gray-700`}
         aria-label="Max price"
       >
-        <option value="">{isBn ? 'যেকোনো দাম' : 'Any price'}</option>
+        <option value="">{isBn ? 'যেকোনো দাম' : isAr ? 'أي سعر' : 'Any price'}</option>
         <option value="5000">≤ 5,000</option>
         <option value="10000">≤ 10,000</option>
         <option value="20000">≤ 20,000</option>
@@ -94,7 +97,7 @@ export default function HotelFilterBar({ locale }: { locale: string }) {
           className={`${chipCls} bg-white border-gray-200 text-gray-700`}
           aria-label="Distance from Haram"
         >
-          <option value="">{isBn ? 'হারাম থেকে দূরত্ব' : 'Distance from Haram'}</option>
+          <option value="">{isBn ? 'হারাম থেকে দূরত্ব' : isAr ? 'المسافة من الحرم' : 'Distance from Haram'}</option>
           <option value="500">≤ 500m</option>
           <option value="1000">≤ 1km</option>
           <option value="2000">≤ 2km</option>
@@ -111,7 +114,7 @@ export default function HotelFilterBar({ locale }: { locale: string }) {
               : 'bg-white text-gray-700 border-gray-200 hover:border-[#2d6a4f]'
           }`}
         >
-          {isBn ? 'সুবিধা' : 'Amenities'}
+          {isBn ? 'সুবিধা' : isAr ? 'المرافق' : 'Amenities'}
           {amenities.length > 0 && ` (${amenities.length})`}
         </button>
         {showAmenities && (
@@ -125,7 +128,7 @@ export default function HotelFilterBar({ locale }: { locale: string }) {
                   className="w-4 h-4 rounded border-gray-300 text-[#2d6a4f] focus:ring-[#2d6a4f]"
                 />
                 <span className="text-sm text-gray-700">
-                  {isBn ? AMENITY_LABELS[a].bn : AMENITY_LABELS[a].en}
+                  {AMENITY_LABELS[a][lang]}
                 </span>
               </label>
             ))}
@@ -141,7 +144,7 @@ export default function HotelFilterBar({ locale }: { locale: string }) {
             className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-red-600"
           >
             <X className="w-3.5 h-3.5" />
-            {isBn ? 'মুছুন' : 'Clear'}
+            {isBn ? 'মুছুন' : isAr ? 'مسح' : 'Clear'}
           </button>
         )}
         <select
@@ -152,7 +155,7 @@ export default function HotelFilterBar({ locale }: { locale: string }) {
         >
           {HOTEL_SORT_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
-              {isBn ? o.bn : o.en}
+              {o[lang]}
             </option>
           ))}
         </select>
