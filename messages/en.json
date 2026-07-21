@@ -107,13 +107,9 @@
     "enquire": "Send Enquiry"
   },
   "footer": {
-    "tagline": "Your trusted partner for Hajj, Umrah, and international travel.",
-    "address": "Azad Centre, 55 Purana Paltan (14th Floor), Dhaka-1000",
     "quickLinks": "Quick Links",
     "contact": "Contact Us",
-    "paymentMethods": "Payment Methods",
-    "paymentNote": "We accept all major cards & mobile banking — secure checkout via SSLCommerz.",
-    "rights": "All rights reserved."
+    "paymentMethods": "Payment Methods"
   },
   "contact": {
     "title": "Contact Us",
