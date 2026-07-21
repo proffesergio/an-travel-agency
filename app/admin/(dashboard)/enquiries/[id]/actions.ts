@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { isValidObjectId } from 'mongoose';
 import { auth } from '@/lib/auth';
+import { isAdminSession } from '@/lib/auth-guards';
 import {
   updateEnquiryStatus as updateEnquiryStatusService,
   deleteEnquiry as deleteEnquiryService,
@@ -12,7 +13,7 @@ import { enquiryStatusSchema } from '@/lib/validation/enquiry';
 
 export async function updateEnquiryStatusAction(id: string, status: string) {
   const session = await auth();
-  if (!session) throw new Error('Unauthorized');
+  if (!isAdminSession(session)) throw new Error('Unauthorized');
   if (!isValidObjectId(id)) throw new Error('Invalid enquiry id');
 
   const parsed = enquiryStatusSchema.safeParse({ status });
@@ -31,7 +32,7 @@ export async function updateEnquiryStatusAction(id: string, status: string) {
 
 export async function deleteEnquiryAction(id: string) {
   const session = await auth();
-  if (!session) throw new Error('Unauthorized');
+  if (!isAdminSession(session)) throw new Error('Unauthorized');
   if (!isValidObjectId(id)) throw new Error('Invalid enquiry id');
 
   const enquiry = await deleteEnquiryService(id, session.user?.email ?? 'unknown');

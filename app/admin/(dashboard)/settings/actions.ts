@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { auth } from '@/lib/auth';
+import { isAdminSession } from '@/lib/auth-guards';
 import { saveSiteSettingsSection } from '@/lib/services/site-settings';
 import {
   siteSettingsSectionSchemas,
@@ -29,7 +30,7 @@ export async function saveSiteSettings(
   formData: FormData
 ): Promise<SettingsActionState> {
   const session = await auth();
-  if (!session) {
+  if (!isAdminSession(session)) {
     return { ok: false, message: 'Unauthorized', errors: {} };
   }
 

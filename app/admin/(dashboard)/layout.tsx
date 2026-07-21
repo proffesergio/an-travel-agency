@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
 import { auth, signOut } from '@/lib/auth';
+import { isAdminSession } from '@/lib/auth-guards';
 import {
   Package,
   MessageSquare,
@@ -29,7 +30,7 @@ export default async function AdminDashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-  if (!session) redirect('/admin/login');
+  if (!isAdminSession(session)) redirect('/admin/login');
 
   const sidebar = (
     <>
