@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 import { Info, X } from 'lucide-react';
 import type { NoticePlacement, NoticeSettings } from '@/lib/site-settings-shared';
 import { pickLocale } from '@/lib/site-settings-defaults';
@@ -18,6 +18,29 @@ function noticeKey(text: string): string {
   return `notice-dismissed-${hash}`;
 }
 
+/**
+ * Dismissal lives in localStorage, which React cannot observe on its own, so
+ * it is read through useSyncExternalStore rather than copied into state by an
+ * effect. The server snapshot reports "dismissed" so the bar stays hidden
+ * through SSR and first paint — an already-dismissed notice never flashes.
+ */
+const listeners = new Set<() => void>();
+
+function subscribe(onStoreChange: () => void): () => void {
+  listeners.add(onStoreChange);
+  // Keep tabs in sync when the notice is dismissed in another one.
+  window.addEventListener('storage', onStoreChange);
+  return () => {
+    listeners.delete(onStoreChange);
+    window.removeEventListener('storage', onStoreChange);
+  };
+}
+
+function setDismissed(key: string): void {
+  window.localStorage.setItem(key, '1');
+  listeners.forEach((notify) => notify());
+}
+
 export default function NoticeBar({
   notice,
   locale,
@@ -28,21 +51,16 @@ export default function NoticeBar({
   placement: NoticePlacement;
 }) {
   const text = pickLocale(notice.text, locale);
-  const [dismissed, setDismissed] = useState(true);
 
-  // Start hidden and reveal after checking localStorage, so a dismissed notice
-  // never flashes on first paint.
-  useEffect(() => {
-    if (!text) return;
-    setDismissed(window.localStorage.getItem(noticeKey(text)) === '1');
-  }, [text]);
+  const getSnapshot = useCallback(
+    () => (text ? window.localStorage.getItem(noticeKey(text)) === '1' : true),
+    [text]
+  );
+  const dismissed = useSyncExternalStore(subscribe, getSnapshot, () => true);
 
   if (!text || dismissed) return null;
 
-  const dismiss = () => {
-    window.localStorage.setItem(noticeKey(text), '1');
-    setDismissed(true);
-  };
+  const dismiss = () => setDismissed(noticeKey(text));
 
   const body = notice.linkUrl ? (
     <a href={notice.linkUrl} className="underline underline-offset-2 hover:no-underline">
