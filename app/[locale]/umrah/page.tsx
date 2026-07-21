@@ -1,6 +1,4 @@
 import { setRequestLocale } from 'next-intl/server';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 import PackageCard from '@/components/packages/PackageCard';
 import { getDisplayPackagesByCategory } from '@/lib/data/packages';
 import { Compass } from 'lucide-react';
@@ -15,10 +13,8 @@ export default async function UmrahPage({ params }: { params: Promise<{ locale: 
   const packages = await getDisplayPackagesByCategory('umrah');
 
   return (
-    <>
-      <Navbar />
-      <main className="flex-1">
-        <div className="bg-[#1b4332] text-white py-16 px-4">
+    <main className="flex-1">
+      <div className="bg-[#1b4332] text-white py-16 px-4">
           <div className="max-w-7xl mx-auto flex items-center gap-4">
             <div className="w-14 h-14 rounded-full bg-[#2d6a4f] flex items-center justify-center">
               <Compass className="w-7 h-7 text-[#74c69d]" />
@@ -56,9 +52,7 @@ export default async function UmrahPage({ params }: { params: Promise<{ locale: 
               ))}
             </div>
           </div>
-        </section>
-      </main>
-      <Footer locale={locale} />
-    </>
+      </section>
+    </main>
   );
 }

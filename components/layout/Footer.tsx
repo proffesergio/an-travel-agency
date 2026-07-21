@@ -12,6 +12,7 @@ import {
 import type { SiteSettingsData, SocialPlatform } from "@/lib/site-settings-shared";
 import { SOCIAL_LABELS } from "@/lib/site-settings-shared";
 import { pickLocale } from "@/lib/site-settings-defaults";
+import NoticeBar from "@/components/layout/NoticeBar";
 
 const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -61,9 +62,11 @@ const SOCIAL_ICONS: Record<SocialPlatform, React.ComponentType<{ className?: str
 export default function Footer({
   settings,
   locale,
+  showNotice,
 }: {
   settings: SiteSettingsData;
   locale: string;
+  showNotice: boolean;
 }) {
   const t = useTranslations("footer");
 
@@ -211,6 +214,10 @@ export default function Footer({
               ))}
             </div>
           </div>
+        )}
+
+        {showNotice && settings.notice.placements.includes('footer') && (
+          <NoticeBar notice={settings.notice} locale={locale} placement="footer" />
         )}
 
         {/* Bottom bar */}

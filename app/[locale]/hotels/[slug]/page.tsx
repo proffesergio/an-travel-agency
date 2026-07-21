@@ -2,8 +2,6 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import { Star, MapPin, Users, BedDouble, Phone, MessageCircle } from 'lucide-react';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 import HotelBookingForm from '@/components/hotels/HotelBookingForm';
 import HotelGallery from '@/components/hotels/HotelGallery';
 import BookRoomButton from './BookRoomButton';
@@ -49,10 +47,8 @@ export default async function HotelDetailPage({
   );
 
   return (
-    <>
-      <Navbar />
-      <main className="flex-1 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 py-8">
+    <main className="flex-1 bg-gray-50">
+      <div className="max-w-6xl mx-auto px-4 py-8">
           {/* Gallery */}
           <HotelGallery images={hotel.images ?? []} name={name} isBn={isBn} />
 
@@ -207,9 +203,7 @@ export default async function HotelDetailPage({
             initialAdults={sp.adults ? Number(sp.adults) : 2}
             initialChildren={sp.children ? Number(sp.children) : 0}
           />
-        </div>
-      </main>
-      <Footer locale={locale} />
-    </>
+      </div>
+    </main>
   );
 }

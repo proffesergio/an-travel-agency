@@ -1,8 +1,6 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { setRequestLocale } from 'next-intl/server';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 import BookingEnquiryForm from '@/components/packages/BookingEnquiryForm';
 import BookNowTrigger from '@/components/packages/BookNowTrigger';
 import { getDisplayPackageBySlug } from '@/lib/data/packages';
@@ -24,10 +22,8 @@ export default async function UmrahDetailPage({
   const title = isBn ? pkg.titleBn || pkg.title : pkg.title;
 
   return (
-    <>
-      <Navbar />
-      <main className="flex-1">
-        <div className="relative h-72 sm:h-96 bg-gray-800">
+    <main className="flex-1">
+      <div className="relative h-72 sm:h-96 bg-gray-800">
           <Image src={pkg.imageUrl} alt={title} fill className="object-cover opacity-60" />
           <div className="absolute inset-0 flex items-end">
             <div className="max-w-7xl mx-auto px-4 w-full pb-8">
@@ -108,9 +104,7 @@ export default async function UmrahDetailPage({
               <BookingEnquiryForm packageTitle={title} packageId={pkg.id} category={pkg.category} />
             </div>
           </div>
-        </div>
-      </main>
-      <Footer locale={locale} />
-    </>
+      </div>
+    </main>
   );
 }

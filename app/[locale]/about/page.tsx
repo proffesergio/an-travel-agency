@@ -1,6 +1,4 @@
 import { setRequestLocale } from 'next-intl/server';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 import Image from 'next/image';
 import { ShieldCheck, Award, Users, HeadphonesIcon } from 'lucide-react';
 
@@ -9,10 +7,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   setRequestLocale(locale);
 
   return (
-    <>
-      <Navbar />
-      <main className="flex-1">
-        {/* Hero */}
+    <main className="flex-1">
+      {/* Hero */}
         <div className="bg-[#1b4332] text-white py-20 px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl sm:text-5xl font-bold mb-4">About Athar Nur Travels</h1>
@@ -131,9 +127,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               * Credential details will be updated once official licence numbers are confirmed.
             </p>
           </div>
-        </section>
-      </main>
-      <Footer locale={locale} />
-    </>
+      </section>
+    </main>
   );
 }

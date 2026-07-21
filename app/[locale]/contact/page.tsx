@@ -1,15 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 import { MapPin, Phone, Clock, Send, MessageCircle } from 'lucide-react';
-import { useParams } from 'next/navigation';
 
 export default function ContactPage() {
-  const params = useParams();
-  const locale = params.locale as string;
-
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
@@ -35,10 +29,8 @@ export default function ContactPage() {
   };
 
   return (
-    <>
-      <Navbar />
-      <main className="flex-1">
-        {/* Hero */}
+    <main className="flex-1">
+      {/* Hero */}
         <div className="bg-[#1b4332] text-white py-16 px-4">
           <div className="max-w-7xl mx-auto text-center">
             <h1 className="text-4xl font-bold mb-3">Contact Us</h1>
@@ -165,9 +157,7 @@ export default function ContactPage() {
               </form>
             )}
           </div>
-        </div>
-      </main>
-      <Footer locale={locale} />
-    </>
+      </div>
+    </main>
   );
 }

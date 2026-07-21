@@ -2,8 +2,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 import Hajj2027RegistrationForm from '@/components/home/Hajj2027RegistrationForm';
 import {
   ArrowRight,
@@ -69,11 +67,9 @@ export default async function Hajj2027Page({
   const whatsappLink = buildWhatsAppLink(HAJJ_2027_PRIMARY_WHATSAPP, HAJJ_2027_WHATSAPP_MESSAGE);
 
   return (
-    <>
-      <Navbar />
-      <main className="flex-1 bg-stone-50">
-        {/* ============================================================ */}
-        {/* HERO                                                          */}
+    <main className="flex-1 bg-stone-50">
+      {/* ============================================================ */}
+      {/* HERO                                                          */}
         {/* ============================================================ */}
         <section className="relative overflow-hidden bg-arabesque text-white">
           {/* Decorative twinkles */}
@@ -503,9 +499,7 @@ export default async function Hajj2027Page({
             <CalendarCheck className="w-4 h-4" />
             Book Now
           </Link>
-        </div>
-      </main>
-      <Footer locale={locale} />
-    </>
+      </div>
+    </main>
   );
 }

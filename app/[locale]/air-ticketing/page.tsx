@@ -1,10 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 import { Plane, Send } from 'lucide-react';
-import { useParams } from 'next/navigation';
 
 const AIRLINES = [
   'Biman Bangladesh Airlines',
@@ -20,9 +17,6 @@ const AIRLINES = [
 ];
 
 export default function AirTicketingPage() {
-  const params = useParams();
-  const locale = params.locale as string;
-
   const [form, setForm] = useState({
     name: '', phone: '', email: '',
     from: '', to: '', date: '',
@@ -51,10 +45,8 @@ export default function AirTicketingPage() {
   };
 
   return (
-    <>
-      <Navbar />
-      <main className="flex-1">
-        {/* Hero */}
+    <main className="flex-1">
+      {/* Hero */}
         <div className="bg-[#1b4332] text-white py-16 px-4">
           <div className="max-w-7xl mx-auto flex items-center gap-4">
             <div className="w-14 h-14 rounded-full bg-[#2d6a4f] flex items-center justify-center">
@@ -188,9 +180,7 @@ export default function AirTicketingPage() {
               </form>
             )}
           </div>
-        </div>
-      </main>
-      <Footer locale={locale} />
-    </>
+      </div>
+    </main>
   );
 }

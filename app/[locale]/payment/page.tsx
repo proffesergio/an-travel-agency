@@ -1,7 +1,5 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 import Hajj2027RegistrationForm from '@/components/home/Hajj2027RegistrationForm';
 import { ShieldCheck, CreditCard, FileImage, Headset, Star, Sparkles } from 'lucide-react';
 
@@ -27,10 +25,8 @@ export default async function PaymentBookingPage({
   setRequestLocale(locale);
 
   return (
-    <>
-      <Navbar />
-      <main className="flex-1 bg-stone-50">
-        {/* Hero */}
+    <main className="flex-1 bg-stone-50">
+      {/* Hero */}
         <section className="relative overflow-hidden bg-arabesque text-white">
           <div className="absolute inset-0 pointer-events-none">
             <Star className="absolute top-10 left-[12%] w-3 h-3 text-amber-300/70 animate-twinkle" />
@@ -100,9 +96,7 @@ export default async function PaymentBookingPage({
 
             <Hajj2027RegistrationForm recommendPassport />
           </div>
-        </section>
-      </main>
-      <Footer locale={locale} />
-    </>
+      </section>
+    </main>
   );
 }

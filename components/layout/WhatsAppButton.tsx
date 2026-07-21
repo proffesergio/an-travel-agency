@@ -2,10 +2,10 @@
 
 import { MessageCircle } from 'lucide-react';
 
-const WHATSAPP_NUMBER = '966537311069';
+export default function WhatsAppButton({ number }: { number: string }) {
+  if (!number) return null;
 
-export default function WhatsAppButton() {
-  const link = `https://wa.me/${WHATSAPP_NUMBER}?text=Hello%2C%20I%20am%20interested%20in%20your%20travel%20packages.`;
+  const link = `https://wa.me/${number}?text=Hello%2C%20I%20am%20interested%20in%20your%20travel%20packages.`;
 
   return (
     <a

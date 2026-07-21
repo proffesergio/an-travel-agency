@@ -1,8 +1,6 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { setRequestLocale } from 'next-intl/server';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 import BookingEnquiryForm from '@/components/packages/BookingEnquiryForm';
 import BookNowTrigger from '@/components/packages/BookNowTrigger';
 import { getDisplayPackageBySlug } from '@/lib/data/packages';
@@ -26,10 +24,8 @@ export default async function HajjDetailPage({
   const duration = isBn ? pkg.durationBn || pkg.duration : pkg.duration;
 
   return (
-    <>
-      <Navbar />
-      <main className="flex-1">
-        {/* Hero */}
+    <main className="flex-1">
+      {/* Hero */}
         <div className="relative h-72 sm:h-96 bg-gray-800">
           <Image src={pkg.imageUrl} alt={title} fill className="object-cover opacity-60" />
           <div className="absolute inset-0 flex items-end">
@@ -129,9 +125,7 @@ export default async function HajjDetailPage({
               />
             </div>
           </div>
-        </div>
-      </main>
-      <Footer locale={locale} />
-    </>
+      </div>
+    </main>
   );
 }

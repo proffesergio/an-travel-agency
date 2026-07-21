@@ -1,6 +1,4 @@
 import { setRequestLocale } from 'next-intl/server';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 import HeroSection from '@/components/home/HeroSection';
 import HomePackageSections from '@/components/home/HomePackageSections';
 import HotelSearchTeaser from '@/components/home/HotelSearchTeaser';
@@ -22,19 +20,15 @@ export default async function HomePage({
   setRequestLocale(locale);
 
   return (
-    <>
-      <Navbar />
-      <main className="flex-1">
-        <HeroSection locale={locale} />
-        <HomePackageSections locale={locale} />
-        <HotelSearchTeaser locale={locale} />
-        <Hajj2027Banner locale={locale} />
-        <ServicesSection locale={locale} />
-        <WhyChooseUs />
-        <StatsSection />
-        <CtaBanner />
-      </main>
-      <Footer locale={locale} />
-    </>
+    <main className="flex-1">
+      <HeroSection locale={locale} />
+      <HomePackageSections locale={locale} />
+      <HotelSearchTeaser locale={locale} />
+      <Hajj2027Banner locale={locale} />
+      <ServicesSection locale={locale} />
+      <WhyChooseUs />
+      <StatsSection />
+      <CtaBanner />
+    </main>
   );
 }
