@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -7,10 +8,41 @@ import Footer from '@/components/layout/Footer';
 import NoticeBar from '@/components/layout/NoticeBar';
 import WhatsAppButton from '@/components/layout/WhatsAppButton';
 import { getSiteSettings } from '@/lib/services/site-settings';
+import { pickLocale } from '@/lib/site-settings-defaults';
 
 // Pre-render both locales so the [locale] segment is statically generated.
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const settings = await getSiteSettings();
+
+  const title = pickLocale(settings.seo.title, locale);
+  const description = pickLocale(settings.seo.description, locale);
+  const ogImages = settings.brand.ogImageUrl ? [{ url: settings.brand.ogImageUrl }] : undefined;
+
+  return {
+    // `template` keeps pages that set their own title — payment,
+    // hajj-2027-pre-registration — and appends the brand name to them.
+    title: { default: title, template: `%s | ${settings.brand.companyName}` },
+    description,
+    icons: {
+      icon: settings.brand.faviconUrl || '/favicon.ico',
+      apple: '/apple-touch-icon.png',
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      images: ogImages,
+    },
+  };
 }
 
 /** True when today falls inside the notice's optional date window. */

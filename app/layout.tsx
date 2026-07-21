@@ -11,9 +11,11 @@ const inter = Inter({
   weight: ['400', '500', '600', '700', '800', '900'],
 });
 
+// Fallback only — every public page is under app/[locale], whose layout
+// generates metadata from the database. This covers /admin.
 export const metadata: Metadata = {
-  title: 'Athar Nur Travels | Hajj, Umrah & International Tours',
-  description: 'Bangladesh\'s trusted travel agency for Hajj, Umrah, international tours and air ticketing.',
+  title: 'Athar Nur Travels',
+  icons: { icon: '/favicon.ico' },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
