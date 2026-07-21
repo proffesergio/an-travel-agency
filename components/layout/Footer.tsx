@@ -1,6 +1,14 @@
-import Image from 'next/image';
-import { useTranslations } from 'next-intl';
-import { Code, Heart, Mail, MapPin, MessageCircle, Phone, Send } from 'lucide-react';
+import Image from "next/image";
+import { useTranslations } from "next-intl";
+import {
+  Code,
+  Heart,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Send,
+} from "lucide-react";
 
 const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -8,7 +16,15 @@ const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
     <rect x="3" y="3" width="18" height="18" rx="5" />
     <circle cx="12" cy="12" r="4" />
     <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" />
@@ -26,38 +42,83 @@ const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 const PHONES = [
-  { number: '+88 01843 431743', countryCode: '+880', tel: '+8801843431743', flag: '🇧🇩', country: 'BD' },
-  { number: '01846-805281', countryCode: '+880', tel: '+8801846805281', flag: '🇧🇩', country: 'BD' },
-  { number: '+966 5373 11069', countryCode: '+966', tel: '+966537311069', flag: '🇸🇦', country: 'KSA' },
-
+  {
+    number: "+88 01843 431743",
+    countryCode: "+880",
+    tel: "+8801843431743",
+    flag: "🇧🇩",
+    country: "BD",
+  },
+  // { number: '01846-805281', countryCode: '+880', tel: '+8801846805281', flag: '🇧🇩', country: 'BD' },
+  {
+    number: "+966 5373 11069",
+    countryCode: "+966",
+    tel: "+966537311069",
+    flag: "🇸🇦",
+    country: "KSA",
+  },
 ];
 
 const SOCIALS = [
   {
-    label: 'Facebook',
-    href: 'https://www.facebook.com/people/%E0%A6%86%E0%A6%A4%E0%A6%B9%E0%A6%BE%E0%A6%B0-%E0%A6%A8%E0%A7%82%E0%A6%B0%E0%A7%81-%E0%A6%9F%E0%A7%8D%E0%A6%B0%E0%A6%BE%E0%A6%AD%E0%A7%87%E0%A6%B2%E0%A6%B8-ATHAR-NUR-Travel/61589306429035/',
+    label: "Facebook",
+    href: "https://www.facebook.com/people/%E0%A6%86%E0%A6%A4%E0%A6%B9%E0%A6%BE%E0%A6%B0-%E0%A6%A8%E0%A7%82%E0%A6%B0%E0%A7%81-%E0%A6%9F%E0%A7%8D%E0%A6%B0%E0%A6%BE%E0%A6%AD%E0%A7%87%E0%A6%B2%E0%A6%B8-ATHAR-NUR-Travel/61589306429035/",
     Icon: FacebookIcon,
   },
-  { label: 'Instagram', href: 'https://instagram.com/atharnurtravels', Icon: InstagramIcon },
-  { label: 'YouTube', href: 'https://youtube.com/@atharnurtravels', Icon: YoutubeIcon },
-  { label: 'LinkedIn', href: 'https://linkedin.com/company/atharnurtravels', Icon: LinkedinIcon },
-  { label: 'WhatsApp', href: 'https://wa.me/8801843431743', Icon: MessageCircle },
-  { label: 'Telegram', href: 'https://t.me/atharnurtravels', Icon: Send },
+  {
+    label: "Instagram",
+    href: "https://instagram.com/atharnurtravels",
+    Icon: InstagramIcon,
+  },
+  {
+    label: "YouTube",
+    href: "https://youtube.com/@atharnurtravels",
+    Icon: YoutubeIcon,
+  },
+  {
+    label: "LinkedIn",
+    href: "https://linkedin.com/company/atharnurtravels",
+    Icon: LinkedinIcon,
+  },
+  {
+    label: "WhatsApp",
+    href: "https://wa.me/8801843431743",
+    Icon: MessageCircle,
+  },
+  { label: "Telegram", href: "https://t.me/atharnurtravels", Icon: Send },
 ];
 
 // Brand-coloured inline payment badges — self-contained, no external assets.
-const PAYMENT_METHODS: { name: string; bg: string; text: string; label: string; sub?: string }[] = [
-  { name: 'VISA',       bg: '#1A1F71', text: '#ffffff', label: 'VISA' },
-  { name: 'Mastercard', bg: '#ffffff', text: '#1a1a1a', label: 'MC', sub: 'MasterCard' },
-  { name: 'bKash',      bg: '#E2136E', text: '#ffffff', label: 'bKash' },
-  { name: 'Nagad',      bg: '#F26522', text: '#ffffff', label: 'Nagad' },
-  { name: 'Rocket',     bg: '#8B2D7E', text: '#ffffff', label: 'Rocket' },
-  { name: 'SSLCommerz', bg: '#0a3d62', text: '#ffffff', label: 'SSL', sub: 'Commerz' },
+const PAYMENT_METHODS: {
+  name: string;
+  bg: string;
+  text: string;
+  label: string;
+  sub?: string;
+}[] = [
+  { name: "VISA", bg: "#1A1F71", text: "#ffffff", label: "VISA" },
+  {
+    name: "Mastercard",
+    bg: "#ffffff",
+    text: "#1a1a1a",
+    label: "MC",
+    sub: "MasterCard",
+  },
+  { name: "bKash", bg: "#E2136E", text: "#ffffff", label: "bKash" },
+  { name: "Nagad", bg: "#F26522", text: "#ffffff", label: "Nagad" },
+  { name: "Rocket", bg: "#8B2D7E", text: "#ffffff", label: "Rocket" },
+  {
+    name: "SSLCommerz",
+    bg: "#0a3d62",
+    text: "#ffffff",
+    label: "SSL",
+    sub: "Commerz",
+  },
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Footer(_props: { locale: string }) {
-  const t = useTranslations('footer');
+  const t = useTranslations("footer");
 
   return (
     <footer className="relative bg-[#0f2d23] text-white overflow-hidden">
@@ -67,8 +128,8 @@ export default function Footer(_props: { locale: string }) {
         className="absolute inset-0 opacity-30 pointer-events-none"
         style={{
           backgroundImage:
-            'radial-gradient(circle at 1px 1px, rgba(116,198,157,0.18) 1px, transparent 0)',
-          backgroundSize: '28px 28px',
+            "radial-gradient(circle at 1px 1px, rgba(116,198,157,0.18) 1px, transparent 0)",
+          backgroundSize: "28px 28px",
         }}
       />
 
@@ -87,7 +148,7 @@ export default function Footer(_props: { locale: string }) {
               />
             </div>
             <p className="text-green-200/90 text-sm leading-relaxed max-w-sm">
-              {t('tagline')}
+              {t("tagline")}
             </p>
             <p className="mt-4 text-xs text-green-300/70 uppercase tracking-widest font-semibold">
               ATAB Registered · Govt. Approved
@@ -113,7 +174,7 @@ export default function Footer(_props: { locale: string }) {
           {/* Payment Methods */}
           <div className="lg:col-span-4">
             <h3 className="font-semibold text-green-200 uppercase tracking-wider text-xs mb-4">
-              {t('paymentMethods')}
+              {t("paymentMethods")}
             </h3>
             <div className="flex flex-wrap gap-2.5">
               {PAYMENT_METHODS.map((p) => (
@@ -132,15 +193,13 @@ export default function Footer(_props: { locale: string }) {
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-xs text-green-300/70">
-              {t('paymentNote')}
-            </p>
+            <p className="mt-4 text-xs text-green-300/70">{t("paymentNote")}</p>
           </div>
 
           {/* Contact */}
           <div className="lg:col-span-4">
             <h3 className="font-semibold text-green-200 uppercase tracking-wider text-xs mb-4">
-              {t('contact')}
+              {t("contact")}
             </h3>
             <ul className="space-y-3">
               {PHONES.map((p) => (
@@ -165,11 +224,11 @@ export default function Footer(_props: { locale: string }) {
               ))}
               <li>
                 <a
-                  href="mailto:info@atharnurtravels.com"
+                  href="mailto:atharnurtravel@gmail.com"
                   className="flex items-center gap-3 text-green-100/90 text-sm hover:text-white transition-colors"
                 >
                   <Mail className="w-4 h-4 text-[#74c69d]" />
-                  info@atharnurtravels.com
+                  atharnurtravel@gmail.com
                 </a>
               </li>
             </ul>
@@ -182,7 +241,7 @@ export default function Footer(_props: { locale: string }) {
             <div className="flex items-center gap-2 text-green-100">
               <MapPin className="w-5 h-5 text-[#74c69d]" />
               <span className="text-sm sm:text-base font-medium">
-                {t('address')}
+                {t("address")}
               </span>
             </div>
           </div>
@@ -191,7 +250,7 @@ export default function Footer(_props: { locale: string }) {
         {/* Bottom bar */}
         <div className="border-t border-white/10 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-green-300/70">
           <span>
-            © {new Date().getFullYear()} Athar Nur Travels. {t('rights')}
+            © {new Date().getFullYear()} Athar Nur Travels. {t("rights")}
           </span>
           <span className="flex items-center gap-1.5">
             <span className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-[#74c69d]/15 text-[#74c69d] animate-dev-blink">
