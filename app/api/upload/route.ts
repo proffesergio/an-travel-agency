@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import { auth } from '@/lib/auth';
+import { isAdminSession } from '@/lib/auth-guards';
 import { isCloudinaryConfigured } from '@/lib/env';
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
@@ -16,7 +17,7 @@ function configureCloudinary() {
 
 export async function POST(request: NextRequest) {
   const session = await auth();
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!isAdminSession(session)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   if (!isCloudinaryConfigured()) {
     return NextResponse.json(
