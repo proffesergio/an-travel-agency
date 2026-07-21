@@ -1,5 +1,9 @@
 import { auth } from '@/lib/auth';
-import { CheckCircle2, XCircle, Settings as SettingsIcon, ShieldCheck, Mail, Phone, KeyRound } from 'lucide-react';
+import { CheckCircle2, XCircle, Settings as SettingsIcon, ShieldCheck, Mail, KeyRound } from 'lucide-react';
+import { getSiteSettings } from '@/lib/services/site-settings';
+import SiteSettingsForm from '@/components/admin/SiteSettingsForm';
+
+export const dynamic = 'force-dynamic';
 
 interface IntegrationCheck {
   key: string;
@@ -40,13 +44,7 @@ function checkIntegrations(): IntegrationCheck[] {
         process.env.CLOUDINARY_API_SECRET
           ? 'configured'
           : 'missing',
-      hint: 'Cloudinary credentials for package image uploads. Required if you upload images.',
-    },
-    {
-      key: 'whatsapp',
-      label: 'WhatsApp Public Number',
-      status: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ? 'configured' : 'missing',
-      hint: 'NEXT_PUBLIC_WHATSAPP_NUMBER — used for the public-site floating WhatsApp button.',
+      hint: 'Required for logo, favicon and package image uploads.',
     },
     {
       key: 'smtp',
@@ -65,6 +63,7 @@ function checkIntegrations(): IntegrationCheck[] {
 
 export default async function AdminSettingsPage() {
   const session = await auth();
+  const settings = await getSiteSettings();
   const integrations = checkIntegrations();
   const configuredCount = integrations.filter((i) => i.status === 'configured').length;
 
@@ -75,11 +74,15 @@ export default async function AdminSettingsPage() {
           <SettingsIcon className="w-6 h-6" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Site Settings</h1>
           <p className="text-sm text-gray-500 mt-0.5">
-            Admin profile and environment configuration health
+            Edit website content — changes go live immediately, no redeploy needed
           </p>
         </div>
+      </div>
+
+      <div className="mb-8">
+        <SiteSettingsForm initial={settings} />
       </div>
 
       <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
@@ -102,16 +105,18 @@ export default async function AdminSettingsPage() {
               <KeyRound className="w-3.5 h-3.5" /> Credentials
             </dt>
             <dd className="mt-1 text-sm text-gray-600">
-              Admin credentials are set via the <code className="px-1.5 py-0.5 bg-gray-100 rounded">ADMIN_EMAIL</code> and{' '}
+              Admin credentials are set via the{' '}
+              <code className="px-1.5 py-0.5 bg-gray-100 rounded">ADMIN_EMAIL</code> and{' '}
               <code className="px-1.5 py-0.5 bg-gray-100 rounded">ADMIN_PASSWORD</code> environment
-              variables. To change them, update your <code className="px-1.5 py-0.5 bg-gray-100 rounded">.env.local</code> (development) or your cPanel Node.js App
-              environment variables (production), then restart the app.
+              variables. To change them, update your{' '}
+              <code className="px-1.5 py-0.5 bg-gray-100 rounded">.env.local</code> (development) or
+              your Vercel project environment variables (production), then redeploy.
             </dd>
           </div>
         </dl>
       </section>
 
-      <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <section className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
             Integrations Health
@@ -154,21 +159,6 @@ export default async function AdminSettingsPage() {
             </li>
           ))}
         </ul>
-      </section>
-
-      <section className="bg-white rounded-xl border border-gray-200 p-6">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-2">
-          <Phone className="w-4 h-4" /> Public WhatsApp Number
-        </h2>
-        <p className="text-sm text-gray-600 mb-2">
-          The public site shows a floating WhatsApp button using this number:
-        </p>
-        <p className="font-mono text-sm bg-gray-50 inline-block px-3 py-1.5 rounded border border-gray-200">
-          {process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '— not set —'}
-        </p>
-        <p className="text-xs text-gray-500 mt-2">
-          To change it, update <code className="px-1 bg-gray-100 rounded">NEXT_PUBLIC_WHATSAPP_NUMBER</code> in your environment and rebuild.
-        </p>
       </section>
     </div>
   );
