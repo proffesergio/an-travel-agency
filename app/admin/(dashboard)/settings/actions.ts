@@ -35,10 +35,10 @@ export async function saveSiteSettings(
   }
 
   const section = String(formData.get('section') ?? '') as SiteSettingsSection;
-  const schema = siteSettingsSectionSchemas[section];
-  if (!schema) {
+  if (!Object.hasOwn(siteSettingsSectionSchemas, section)) {
     return { ok: false, message: `Unknown settings section: ${section}`, errors: {} };
   }
+  const schema = siteSettingsSectionSchemas[section];
 
   let raw: unknown;
   try {

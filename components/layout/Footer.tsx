@@ -70,9 +70,25 @@ export default function Footer({
 }) {
   const t = useTranslations("footer");
 
-  const phones = settings.contact.phones.filter((p) => p.enabled);
-  const socials = settings.socials.filter((s) => s.enabled && s.url);
-  const payments = settings.payments.filter((p) => p.enabled);
+  // `order` is authoritative for render order; sort a copy so the shared,
+  // cached `settings` object is never mutated (other renders read it too).
+  // Each array is also defensively narrowed with Array.isArray: the source
+  // document is read with `.lean()` (uncast POJOs) and merged with
+  // non-validating logic, so a malformed shape here (e.g. a hand-edit in
+  // Atlas) must degrade to an empty list rather than throwing inside the
+  // layout and 500-ing every locale route.
+  const phones = (Array.isArray(settings.contact.phones) ? [...settings.contact.phones] : [])
+    .sort((a, b) => a.order - b.order)
+    .filter((p) => p.enabled);
+  const offices = (Array.isArray(settings.offices) ? [...settings.offices] : []).sort(
+    (a, b) => a.order - b.order
+  );
+  const socials = (Array.isArray(settings.socials) ? [...settings.socials] : [])
+    .sort((a, b) => a.order - b.order)
+    .filter((s) => s.enabled && s.url);
+  const payments = (Array.isArray(settings.payments) ? [...settings.payments] : [])
+    .sort((a, b) => a.order - b.order)
+    .filter((p) => p.enabled);
 
   return (
     <footer className="relative bg-[#0f2d23] text-white overflow-hidden">
@@ -196,10 +212,10 @@ export default function Footer({
         </div>
 
         {/* Address bar */}
-        {settings.offices.length > 0 && (
+        {offices.length > 0 && (
           <div className="border-t border-white/10 py-6">
             <div className="flex flex-col md:flex-row items-center justify-center gap-x-10 gap-y-3 text-center">
-              {settings.offices.map((office, index) => (
+              {offices.map((office, index) => (
                 <div key={index} className="flex items-center gap-2 text-green-100">
                   <MapPin className="w-5 h-5 text-[#74c69d] flex-shrink-0" />
                   <span className="text-sm sm:text-base font-medium">

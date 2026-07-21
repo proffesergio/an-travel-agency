@@ -61,12 +61,20 @@ async function fetchSiteSettings(): Promise<SiteSettingsData> {
 
 /**
  * Persistent layer: Vercel's Data Cache, shared across every instance and
- * region. No `revalidate` is set, so this is invalidated *only* by an admin
- * save calling revalidateTag(SITE_SETTINGS_TAG). MongoDB therefore sees
- * roughly one query per edit rather than one per page view.
+ * region. Invalidated *instantly* by an admin save calling
+ * revalidateTag(SITE_SETTINGS_TAG, { expire: 0 }) — that path is unaffected
+ * by the `revalidate` below. The bounded TTL exists for a different reason:
+ * every `[locale]` route is statically prerendered, and some rendering
+ * derived from this data is time-dependent rather than edit-dependent —
+ * notice.startsAt/endsAt windows (app/[locale]/layout.tsx) and the footer's
+ * copyright year (components/layout/Footer.tsx) both change with the
+ * calendar, not with an admin save. Without a TTL those would drift forever
+ * between saves (a notice could sit expired for months, the year could
+ * freeze). One hour bounds that drift while still keeping MongoDB reads rare.
  */
 const getCachedSiteSettings = unstable_cache(fetchSiteSettings, [SITE_SETTINGS_TAG], {
   tags: [SITE_SETTINGS_TAG],
+  revalidate: 3600,
 });
 
 /**

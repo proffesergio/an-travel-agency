@@ -61,7 +61,10 @@ export const officesSchema = z.object({
 
 const socialSchema = z.object({
   platform: z.enum(SOCIAL_PLATFORMS),
-  url: z.url('Enter a valid URL including https://').max(500),
+  url: z
+    .url('Enter a valid URL including https://')
+    .max(500)
+    .refine((u) => /^https?:\/\//.test(u), 'URL must start with http:// or https://'),
   enabled: z.boolean().default(true),
   order: z.number().int().min(0).default(0),
 });
@@ -88,7 +91,14 @@ export const noticeSchema = z
   .object({
     enabled: z.boolean().default(false),
     text: localizedSchema,
-    linkUrl: z.string().max(500).default(''),
+    linkUrl: z
+      .string()
+      .max(500)
+      .refine(
+        (u) => u === '' || /^https?:\/\//.test(u) || u.startsWith('/'),
+        'Link must start with http://, https://, or / for an internal link'
+      )
+      .default(''),
     placements: z.array(z.enum(NOTICE_PLACEMENTS)).default([]),
     startsAt: z.string().regex(ISO_DATE).or(z.literal('')).default(''),
     endsAt: z.string().regex(ISO_DATE).or(z.literal('')).default(''),
