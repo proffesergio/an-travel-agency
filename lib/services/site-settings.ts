@@ -11,13 +11,50 @@ import {
 import { DEFAULT_SITE_SETTINGS, mergeSiteSettings } from '@/lib/site-settings-defaults';
 
 /**
+ * The eight sections of the typed contract, and nothing else. Driving the
+ * Mongo `.select()` off this list (rather than hand-typing a select string
+ * at the query site) keeps the projection in one place. The `satisfies`
+ * clause below catches a typo'd/stale key at compile time; the
+ * `_assertAllSectionKeysListed` check catches the opposite drift — a key
+ * added to `SiteSettingsData` but forgotten here — since the plain
+ * assignment (no `as` cast) fails to typecheck unless every key is covered.
+ */
+const SITE_SETTINGS_SECTION_KEYS = [
+  'brand',
+  'contact',
+  'offices',
+  'socials',
+  'payments',
+  'notice',
+  'footer',
+  'seo',
+] as const satisfies readonly (keyof SiteSettingsData)[];
+
+type _AllSectionKeysListed = keyof SiteSettingsData extends (typeof SITE_SETTINGS_SECTION_KEYS)[number]
+  ? true
+  : never;
+const _assertAllSectionKeysListed: _AllSectionKeysListed = true;
+void _assertAllSectionKeysListed;
+
+/**
  * Reads the singleton document. Throws on database failure — the caller
  * decides how to degrade. Keeping the throw here means unstable_cache never
  * stores a failed read.
  */
 async function fetchSiteSettings(): Promise<SiteSettingsData> {
   await connectDB();
-  const doc = await SiteSettings.findById(SITE_SETTINGS_ID).lean().exec();
+  // `.select(...)` projects the query down to exactly the SiteSettingsData
+  // sections, so Mongo-internal fields (_id, createdAt, updatedAt,
+  // updatedBy, __v) never come back — mergeSiteSettings only ever sees keys
+  // that belong in the typed contract. Projection does not materialize a
+  // field: a section that's absent in the document (untouched by any admin
+  // save, per the `default: undefined` sub-schemas in models/SiteSettings.ts)
+  // stays absent here too, so mergeSiteSettings still falls back to
+  // DEFAULT_SITE_SETTINGS for it.
+  const doc = await SiteSettings.findById(SITE_SETTINGS_ID)
+    .select(`${SITE_SETTINGS_SECTION_KEYS.join(' ')} -_id`)
+    .lean()
+    .exec();
   if (!doc) return DEFAULT_SITE_SETTINGS;
   return mergeSiteSettings(DEFAULT_SITE_SETTINGS, doc);
 }
@@ -28,7 +65,7 @@ async function fetchSiteSettings(): Promise<SiteSettingsData> {
  * save calling revalidateTag(SITE_SETTINGS_TAG). MongoDB therefore sees
  * roughly one query per edit rather than one per page view.
  */
-const getCachedSiteSettings = unstable_cache(fetchSiteSettings, ['site-settings'], {
+const getCachedSiteSettings = unstable_cache(fetchSiteSettings, [SITE_SETTINGS_TAG], {
   tags: [SITE_SETTINGS_TAG],
 });
 
