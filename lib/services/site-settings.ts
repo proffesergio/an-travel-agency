@@ -8,7 +8,7 @@ import {
   SITE_SETTINGS_TAG,
   type SiteSettingsData,
 } from '@/lib/site-settings-shared';
-import { DEFAULT_SITE_SETTINGS, mergeSiteSettings } from '@/lib/site-settings-defaults';
+import { normalizeSiteSettings } from '@/lib/site-settings-normalize';
 
 /**
  * The eight sections of the typed contract, and nothing else. Driving the
@@ -45,19 +45,29 @@ async function fetchSiteSettings(): Promise<SiteSettingsData> {
   await connectDB();
   // `.select(...)` projects the query down to exactly the SiteSettingsData
   // sections, so Mongo-internal fields (_id, createdAt, updatedAt,
-  // updatedBy, __v) never come back — mergeSiteSettings only ever sees keys
-  // that belong in the typed contract. Projection does not materialize a
+  // updatedBy, __v) never come back. Projection does not materialize a
   // field: a section that's absent in the document (untouched by any admin
   // save, per the `default: undefined` sub-schemas in models/SiteSettings.ts)
-  // stays absent here too, so mergeSiteSettings still falls back to
-  // DEFAULT_SITE_SETTINGS for it.
+  // stays absent here too, so normalizeSiteSettings falls back to
+  // DEFAULT_SITE_SETTINGS for it. Passing a missing document (null) through
+  // the same normalizer needs no special case.
   const doc = await SiteSettings.findById(SITE_SETTINGS_ID)
     .select(`${SITE_SETTINGS_SECTION_KEYS.join(' ')} -_id`)
     .lean()
     .exec();
-  if (!doc) return DEFAULT_SITE_SETTINGS;
-  return mergeSiteSettings(DEFAULT_SITE_SETTINGS, doc);
+  return normalizeSiteSettings(doc);
 }
+
+/**
+ * Bumped whenever SiteSettingsData changes shape. The Data Cache is
+ * persistent and survives deploys, so without a version in the key an entry
+ * written under an older contract is served indefinitely to new code. That is
+ * exactly what took the admin Settings tab down: a cached value with no
+ * `brand` section reached the form and `data.brand.companyName` threw.
+ * normalizeSiteSettings below now repairs such an entry regardless, but
+ * versioning the key means the stale value is never even read.
+ */
+const SHAPE_VERSION = 'v2';
 
 /**
  * Persistent layer: Vercel's Data Cache, shared across every instance and
@@ -72,7 +82,7 @@ async function fetchSiteSettings(): Promise<SiteSettingsData> {
  * between saves (a notice could sit expired for months, the year could
  * freeze). One hour bounds that drift while still keeping MongoDB reads rare.
  */
-const getCachedSiteSettings = unstable_cache(fetchSiteSettings, [SITE_SETTINGS_TAG], {
+const getCachedSiteSettings = unstable_cache(fetchSiteSettings, [SITE_SETTINGS_TAG, SHAPE_VERSION], {
   tags: [SITE_SETTINGS_TAG],
   revalidate: 3600,
 });
@@ -83,15 +93,23 @@ const getCachedSiteSettings = unstable_cache(fetchSiteSettings, [SITE_SETTINGS_T
  *
  * The try/catch lives out here, *outside* unstable_cache, so a transient
  * MongoDB outage degrades to defaults for that request without poisoning the
- * cache. Were it inside, one blip would pin the site to defaults until the
- * next admin save — potentially forever, since there is no TTL.
+ * cache. Were it inside, one blip would pin the site to defaults until either
+ * the next admin save or the hour-long TTL above — a long time to serve the
+ * wrong phone number for what may have been a two-second blip.
+ *
+ * The cached value is normalized *again* on the way out. It was already
+ * normalized on the way in, but the two happen in different processes and
+ * potentially different deploys: whatever fetchSiteSettings stored may have
+ * been shaped by code that no longer exists. This is the boundary that lets
+ * every caller — the locale layout, the footer, generateMetadata, the admin
+ * form — read `settings.brand.companyName` without a null check.
  */
 export const getSiteSettings = cache(async (): Promise<SiteSettingsData> => {
   try {
-    return await getCachedSiteSettings();
+    return normalizeSiteSettings(await getCachedSiteSettings());
   } catch (error) {
     console.error('[site-settings] read failed, serving defaults', error);
-    return DEFAULT_SITE_SETTINGS;
+    return normalizeSiteSettings(undefined);
   }
 });
 
@@ -100,10 +118,19 @@ export const getSiteSettings = cache(async (): Promise<SiteSettingsData> => {
  * by the caller.
  */
 export async function saveSiteSettingsSection(
-  section: string,
+  section: keyof SiteSettingsData,
   value: unknown,
   updatedBy: string
 ): Promise<void> {
+  // `section` is interpolated into a Mongo update path, so it is re-checked
+  // here rather than trusted from the caller. The server action already
+  // rejects unknown sections, but this function is exported and the type
+  // annotation vanishes at runtime — a bad `section` must not be able to
+  // reach `$set` and write an arbitrary field (or `__proto__`).
+  if (!(SITE_SETTINGS_SECTION_KEYS as readonly string[]).includes(section)) {
+    throw new Error(`Refusing to write unknown settings section: ${String(section)}`);
+  }
+
   await connectDB();
   await SiteSettings.findByIdAndUpdate(
     SITE_SETTINGS_ID,

@@ -20,6 +20,7 @@ import {
   type SiteSettingsData,
   type SocialPlatform,
 } from '@/lib/site-settings-shared';
+import { normalizeSiteSettings } from '@/lib/site-settings-normalize';
 
 const INPUT =
   'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#2d6a4f] focus:outline-none focus:ring-1 focus:ring-[#2d6a4f]';
@@ -67,12 +68,24 @@ function SectionForm({
 }) {
   const [state, formAction, pending] = useActionState(saveSiteSettings, emptySettingsActionState);
 
+  // Every field below reads `state.errors.<path>`, so a state without an
+  // `errors` object throws the same "cannot read properties of undefined"
+  // that a missing settings section does — and it would surface *after* a
+  // save, when the admin has unsaved work on screen. The action always sets
+  // `errors` today; this makes that a local guarantee rather than a
+  // cross-module assumption.
+  const safeState: SettingsActionState = {
+    ok: Boolean(state?.ok),
+    message: state?.message ?? '',
+    errors: state?.errors ?? {},
+  };
+
   return (
     <form action={formAction} className="space-y-5">
       <input type="hidden" name="section" value={section} />
       <input type="hidden" name="payload" value={JSON.stringify(payload)} />
-      {children(state)}
-      <SaveBar state={state} pending={pending} />
+      {children(safeState)}
+      <SaveBar state={safeState} pending={pending} />
     </form>
   );
 }
@@ -85,7 +98,16 @@ const makeRowKey = () =>
 
 export default function SiteSettingsForm({ initial }: { initial: SiteSettingsData }) {
   const [tab, setTab] = useState<string>('brand');
-  const [data, setData] = useState<SiteSettingsData>(initial);
+
+  /**
+   * `initial` is re-normalized even though the service already normalized it.
+   * The prop has crossed a persistent cache and an RSC serialization boundary
+   * on its way here, and every field below dereferences it two levels deep
+   * (`data.brand.companyName`) — a single missing section takes the whole
+   * admin panel down behind the error boundary, which is precisely how this
+   * form broke in production. The cost is one pure function call per mount.
+   */
+  const [data, setData] = useState<SiteSettingsData>(() => normalizeSiteSettings(initial));
 
   // Offices rows nest LocalizedField, which holds local state for the
   // selected locale tab. Without a stable key independent of array position,
@@ -94,7 +116,9 @@ export default function SiteSettingsForm({ initial }: { initial: SiteSettingsDat
   // server (RepeatableList only reads it for React's `key`), and kept in
   // lockstep with `data.offices` by every handler that changes the array's
   // shape or order.
-  const [officeKeys, setOfficeKeys] = useState<string[]>(() => initial.offices.map(makeRowKey));
+  const [officeKeys, setOfficeKeys] = useState<string[]>(() =>
+    normalizeSiteSettings(initial).offices.map(makeRowKey)
+  );
 
   const set = <K extends keyof SiteSettingsData>(key: K, value: SiteSettingsData[K]) =>
     setData((prev) => ({ ...prev, [key]: value }));

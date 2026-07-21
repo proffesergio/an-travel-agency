@@ -119,39 +119,14 @@ export const DEFAULT_SITE_SETTINGS: SiteSettingsData = {
   },
 };
 
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
 /**
- * Deep-merge a partial settings document over the defaults.
- *
- * Arrays are replaced wholesale, never element-merged: if an admin deletes
- * every phone number, an empty array must survive rather than resurrecting
- * the defaults. Plain objects recurse, so a Localized value missing its 'ar'
- * key still falls back to the default Arabic string.
+ * Merging a partial document over these defaults is the job of
+ * `normalizeSiteSettings` in lib/site-settings-normalize.ts. It replaced a
+ * generic deep merge that used to live here: that merge was shape-blind, so a
+ * document holding `brand: "oops"` (or a stale cache entry holding no `brand`
+ * at all) produced a value that satisfied the type checker and then threw on
+ * the first property read.
  */
-export function mergeSiteSettings(
-  defaults: SiteSettingsData,
-  partial: unknown
-): SiteSettingsData {
-  if (!isPlainObject(partial)) return defaults;
-
-  const merge = (base: unknown, override: unknown): unknown => {
-    if (override === undefined || override === null) return base;
-    if (Array.isArray(override)) return override;
-    if (isPlainObject(base) && isPlainObject(override)) {
-      const out: Record<string, unknown> = { ...base };
-      for (const key of Object.keys(override)) {
-        out[key] = merge(base[key], override[key]);
-      }
-      return out;
-    }
-    return override;
-  };
-
-  return merge(defaults, partial) as SiteSettingsData;
-}
 
 /** Convenience for reading a Localized value with an English fallback. */
 export function pickLocale(value: Localized, locale: string): string {
