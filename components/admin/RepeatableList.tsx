@@ -11,6 +11,7 @@ export default function RepeatableList<T>({
   addLabel,
   emptyLabel,
   canAdd = true,
+  getKey,
 }: {
   items: T[];
   renderItem: (item: T, index: number) => React.ReactNode;
@@ -20,6 +21,14 @@ export default function RepeatableList<T>({
   addLabel: string;
   emptyLabel: string;
   canAdd?: boolean;
+  /**
+   * Stable identity per row. Rows whose content holds local state — e.g. a
+   * nested LocalizedField remembers which locale tab is open — must supply
+   * this. Without it React reconciles by position, so deleting or moving a
+   * row leaves that state attached to the slot instead of the item, and the
+   * wrong tab appears selected for the row's data.
+   */
+  getKey?: (item: T, index: number) => string;
 }) {
   return (
     <div className="space-y-3">
@@ -28,7 +37,10 @@ export default function RepeatableList<T>({
       )}
 
       {items.map((item, index) => (
-        <div key={index} className="rounded-lg border border-gray-200 p-4 bg-gray-50/60">
+        <div
+          key={getKey ? getKey(item, index) : index}
+          className="rounded-lg border border-gray-200 p-4 bg-gray-50/60"
+        >
           <div className="flex justify-end gap-1 mb-2">
             <button
               type="button"
