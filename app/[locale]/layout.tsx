@@ -7,6 +7,9 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import NoticeBar from '@/components/layout/NoticeBar';
 import WhatsAppButton from '@/components/layout/WhatsAppButton';
+import MaintenancePage from '@/components/layout/MaintenancePage';
+import { auth } from '@/lib/auth';
+import { isAdminSession } from '@/lib/auth-guards';
 import { getSiteSettings } from '@/lib/services/site-settings';
 import { pickLocale } from '@/lib/site-settings-defaults';
 
@@ -69,6 +72,11 @@ export default async function LocaleLayout({
   // Required for static rendering with next-intl — without it, next-intl
   // reads headers() at request time and trips DYNAMIC_SERVER_USAGE.
   setRequestLocale(locale);
+
+  if (process.env.MAINTENANCE_MODE === 'true') {
+    const session = await auth();
+    if (!isAdminSession(session)) return <MaintenancePage />;
+  }
 
   const messages = await getMessages();
   const settings = await getSiteSettings();
