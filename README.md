@@ -1,5 +1,7 @@
 # Athar Nur Travels
 
+![Athar Nur Travels — custom travel agency platform](./public/readme-hero.svg)
+
 ### A conversion-focused travel agency website with a powerful operations dashboard
 
 Athar Nur Travels is a complete travel-agency website concept built to help agencies present their services professionally, generate qualified enquiries, and manage their day-to-day content from one place.
