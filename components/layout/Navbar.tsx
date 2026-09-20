@@ -7,7 +7,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ChevronDown, Globe, Menu, Phone, Sparkles, X } from 'lucide-react';
 import AuthButton from '@/components/auth/AuthButton';
-import PaymentReminderNotice from '@/components/layout/PaymentReminderNotice';
 import { Analytics } from "@vercel/analytics/next";
 
 const LOCALES = [
@@ -70,7 +69,6 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full">
-      <PaymentReminderNotice locale={currentLocale} />
       <nav
         className={`transition-all duration-300 ${
           scrolled
